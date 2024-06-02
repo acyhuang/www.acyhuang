@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const Sidebar = () => (
   <div className="space-y-8 font-sf-mono text-sm">
-    <Link to="/about" className="font-gothic-a1 text-gray-200 text-6xl font-bold">allison huang</Link>
+    <Link to="/about" className="font-gothic-a1 text-gray-200 text-6xl font-bold leading-3.3">allison huang</Link>
     <div className="text-gray-400">
       <p>IS CURRENTLY</p>
       <ul className="list-disc list-inside">
