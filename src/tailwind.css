@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    h1 {
+        @apply text-xl mt-8 text-gray-200 font-medium
+    }
+    h2 {
+        @apply text-lg mt-4 text-gray-200
+    }
+    p {
+        @apply text-base mt-2 text-gray-400
+    }
+    ul {
+        @apply list-disc list-inside
+    }
+}
