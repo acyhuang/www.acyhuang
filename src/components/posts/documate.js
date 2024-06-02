@@ -1,11 +1,19 @@
 import React from 'react';
-import Post from '../post';
+import PostHeader from '../postHeader';
 
 const postDetails = {
   title: 'Documate',
+  tag: 'design',
+  date: '2023',
   description: 'This is the description for Project 1.',
 };
 
-const Documate = () => <Post {...postDetails} />;
-
+const Documate = () => {
+  return (
+    <div className="py-16 px-12">
+       <PostHeader {...postDetails} />
+       <p>more custom text</p>
+    </div>
+  );
+};
 export default Documate;

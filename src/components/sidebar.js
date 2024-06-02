@@ -1,19 +1,19 @@
 import React from 'react';
-import './sidebar.css';
+import PostsList from './postsList';
 import { Link } from 'react-router-dom';
 
 const Sidebar = () => (
-  <div>
-    <Link to="/about"><h1>allison huang</h1></Link>
-    <p>IS CURRENTLY...</p>
-    <ul>
-        <li>STUDYING AT USC</li>
-        <li>READING ___</li>
-        <li>TRYING TO FIGURE THE REST OUT</li>
-    </ul>
-    <Link to="/documate">Documate</Link>
-    <br></br>
-    <Link to="/calendars">On calendars</Link>
+  <div className="space-y-8 font-sf-mono text-sm">
+    <Link to="/about" className="font-gothic-a1 text-gray-200 text-6xl font-bold">allison huang</Link>
+    <div className="text-gray-400">
+      <p>IS CURRENTLY</p>
+      <ul className="list-disc list-inside">
+          <li>STUDYING AN INTEGRATED DESIGN, CS, AND BUSINESS DEGREE AT UNIVERSITY OF SOUTHERN CALIFORNIA</li>
+          <li>READING ___</li>
+          <li>TRYING TO FIGURE THE REST OUT...</li>
+      </ul>
+    </div>
+    <PostsList / >
   </div>
 );
 

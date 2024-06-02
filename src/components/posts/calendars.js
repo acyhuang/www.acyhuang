@@ -1,11 +1,12 @@
 import React from 'react';
-import Post from '../post';
+import PostHeader from '../postHeader';
 
 const postDetails = {
   title: 'On calendars',
+  tag: 'design',
   description: 'blah blah blah.',
 };
 
-const Calendars = () => <Post {...postDetails} />;
+const Calendars = () => <PostHeader {...postDetails} />;
 
 export default Calendars;
