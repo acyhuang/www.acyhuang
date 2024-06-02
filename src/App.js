@@ -7,16 +7,18 @@ import Sidebar from './components/sidebar';
 
 function App() {
   return (
-    <div className="bg-gray-950 text-gray-100 fixed">
-      <div className="inline md:flex">
-        <div className="max-w-full md:max-w-sm px-12 py-16 border-r border-0 border-gray-700 h-screen overflow-hidden">
+    <div className="bg-gray-950 text-gray-100 min-h-screen md:fixed md:top-0 md:left-0 md:right-0 md:bottom-0 md:h-screen">
+      <div className="flex flex-col md:flex-row h-full">
+        <div className="max-w-full md:max-w-sm px-12 py-16 border-r border-0 border-gray-700 md:h-screen md:overflow-hidden">
           <Sidebar />
         </div>
-        <div className="overflow-y-scroll h-screen">
+        <div className="flex-1 min-h-screen md:h-full md:overflow-y-scroll">
           <Outlet />
         </div>
       </div>
     </div>
+
+
   );
 }
 
