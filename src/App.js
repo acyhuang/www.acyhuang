@@ -7,12 +7,12 @@ import Sidebar from './components/sidebar';
 
 function App() {
   return (
-    <div className="bg-gray-950 text-gray-100 h-screen">
-      <div className="inline md:flex h-screen">
-        <div className="max-w-full md:max-w-sm px-12 py-16 border-r border-0 border-gray-700">
+    <div className="bg-gray-950 text-gray-100 fixed">
+      <div className="inline md:flex">
+        <div className="max-w-full md:max-w-sm px-12 py-16 border-r border-0 border-gray-700 h-screen overflow-hidden">
           <Sidebar />
         </div>
-        <div className="">
+        <div className="overflow-y-scroll h-screen">
           <Outlet />
         </div>
       </div>
