@@ -4,18 +4,24 @@
 
 @layer base {
     h1 {
-        @apply text-xl mt-8 text-gray-200 font-medium;
+        @apply text-2xl mt-8 text-gray-200 font-medium;
     }
     h2 {
-        @apply text-lg mt-4 text-gray-200;
+        @apply text-xl mt-6 text-gray-200;
     }
     p {
         @apply text-base mt-2 text-gray-400;
     }
     ul {
-        @apply list-disc list-inside pl-4;
+        @apply list-disc list-inside pl-4 text-gray-400;
     }
     ol {
-        @apply list-decimal list-inside pl-4;
+        @apply list-decimal list-inside pl-4 text-gray-400;
+    }
+    b {
+        @apply font-medium text-gray-200;
+    }
+    img {
+        @apply py-4;
     }
 }

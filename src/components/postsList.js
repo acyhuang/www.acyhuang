@@ -23,7 +23,7 @@ const PostsList = () => {
             <tr key={index}>
               <td className="text-left py-2 border-b border-gray-700 hover:text-blue-400">
                 <div className="flex items-end">
-                    <img src={SEArrow} alt="arrow icon" className="w-2 h-2 mr-2 mb-1.5" />
+                    <img src={SEArrow} alt="arrow icon" className="py-0 w-2 h-2 mr-2 mb-1.5" />
                     <Link to={post.path}>{post.title}</Link>
                 </div>
               </td>
