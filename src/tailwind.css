@@ -28,7 +28,7 @@
         @apply bg-blue-950;
     }
     .text-container {
-        @apply w-full lg:max-w-prose px-4 pt-4 sm:pb-16 sm:px-12;
+        @apply w-full lg:max-w-prose px-4 pt-4 sm:pb-16 sm:px-12 md:pt-8;
     }
     .caption {
         @apply font-sf-mono text-xs uppercase;
