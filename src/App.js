@@ -8,7 +8,6 @@ import Sidebar from './components/sidebar';
 function App() {
   return (
     <div className="bg-gray-950 text-gray-100 min-h-screen md:fixed md:top-0 md:left-0 md:right-0 md:bottom-0 md:h-screen">
-      <title>acyhuang</title>
       <div className="flex flex-col md:flex-row h-full">
         <div className="max-w-full md:max-w-sm px-12 py-16 border-r border-0 border-gray-700 md:h-screen md:overflow-hidden">
           <Sidebar />
