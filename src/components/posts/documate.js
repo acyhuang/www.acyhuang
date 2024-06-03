@@ -10,16 +10,14 @@ import macImg from '../../assets/documate/mac.png';
 const postDetails = {
   title: 'Documate',
   tag: 'design',
-  date: '2023',
-  description: 'This is the description for Project 1.',
+  date: '2.2023 – 4.2023',
+  description: 'Completed in USC’s premier product incubator, Lavalab, where we conceived, built, and pitched Documate in eight weeks.',
 };
 
 const Documate = () => {
   return (
-    <div className="py-16 px-12">
+    <div className="text-container">
       <PostHeader {...postDetails} />
-      <p>This was a project completed in USC’s premier product incubator, Lavalab, where we conceived, built, and pitched Documate over eight weeks.</p>
-      
       <h1>Problem: Hardware documentation is really hard to read.</h1>
       <p>Manuals are full of dense text and diagrams, and they’re often hundreds of pages long. This makes it incredibly time-consuming to figure out how to accomplish a specific task with a piece of unfamiliar hardware.</p>
       

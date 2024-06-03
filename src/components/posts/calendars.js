@@ -2,11 +2,19 @@ import React from 'react';
 import PostHeader from '../postHeader';
 
 const postDetails = {
-  title: 'On calendars',
+  title: 'on Calendars',
   tag: 'design',
-  description: 'blah blah blah.',
+  date: '2024',
+  description: 'this is my obsession.',
 };
 
-const Calendars = () => <PostHeader {...postDetails} />;
-
-export default Calendars;
+const Post = () => {
+  return (
+    <div className="text-container">
+      <div className="caption">
+        <PostHeader {...postDetails} />
+      </div>
+    </div>
+  );
+};
+export default Post;

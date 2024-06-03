@@ -2,7 +2,8 @@ import React from 'react';
 
 const Post = ({ title, tag, date, description }) => (
   <div>
-    <p>{date}</p>
+    <p className="caption"> TIMELINE: {date}</p>
+    <p className="caption">{description}</p>
   </div>
 );
 

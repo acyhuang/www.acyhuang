@@ -7,7 +7,6 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import Home from './components/pages/home';
-import About from './components/pages/about';
 // import postRoutes from './routes'; // for dynamic routing
 
 import Documate from './components/posts/documate';
@@ -22,7 +21,6 @@ root.render(
           
           <Route path="/" element={<App />}>
             <Route index element={<Home />} />
-            <Route path="about" element={<About />} />
             <Route path="documate" element={<Documate />} />
             <Route path="calendars" element={<Calendars />} />
             {/* {postRoutes} */}

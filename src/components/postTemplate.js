@@ -10,9 +10,10 @@ const postDetails = {
 
 const Post = () => {
   return (
-    <div className="py-16 px-12">
-       <PostHeader {...postDetails} />
-       <p>more custom text</p>
+    <div className="text-container">
+      <div>
+        <PostHeader {...postDetails} />
+      </div>
     </div>
   );
 };
