@@ -4,8 +4,8 @@ import SEArrow from '../assets/arrow.svg';
 
 const PostsList = () => {
   const posts = [
+    { title: "My favorite products", tag: "product", path: "/products" },
     { title: "Documate", tag: "design", path: "/documate" },
-    { title: "On calendars", tag: "design", path: "/calendars" },
     // { title: "Binary", tag: "design" },
   ];
 
@@ -24,7 +24,7 @@ const PostsList = () => {
               <td className="text-left py-2 border-b border-gray-700">
                 <div className="flex items-end">
                     <img src={SEArrow} alt="arrow icon" className="py-0 w-2 h-2 mr-2 mb-1.5" />
-                    <Link to={post.path} className="hover:no-underline hover:text-blue-500">{post.title}</Link>
+                    <Link to={post.path} className="hover:no-underline">{post.title}</Link>
                 </div>
               </td>
               <td className="text-left text-gray-400 py-2 px-4 border-b border-gray-700">{post.tag}</td>

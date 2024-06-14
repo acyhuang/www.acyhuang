@@ -16,7 +16,7 @@ const Post = () => {
       </div>
        */}
       <h1>my favorite products</h1>
-      <p>It feels a bit pretentious to claim that I'm "product-obsessed" without writing about some of my favorites.</p>
+      <p>It feels a bit pretentious to claim that I'm "product-obsessed" without writing about some of my favorites. Last updated on 06-13-2024.</p>
       <ul className="space-y-2">
         <li><b><a href="https://retro.app" target="_new">Retro</a></b> — what social media for close friends should be</li>
         <li><b><a href="https://www.yeti.com/drinkware/hydration/chug-bottle-18oz.html" target="_new">Yeti Rambler</a></b> — a water bottle that's easy to keep clean, incredibly robust, and has controlled water flow</li>
