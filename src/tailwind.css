@@ -4,16 +4,16 @@
 
 @layer base {
     h1 {
-        @apply text-2xl mt-8 text-gray-200 font-medium;
+        @apply text-3xl mt-8 mb-4 text-gray-200 font-medium;
     }
     h2 {
-        @apply text-xl mt-6 text-gray-200;
+        @apply text-xl mt-6 mb-3 text-gray-200;
     }
     p {
         @apply text-base mt-2 text-gray-400;
     }
     ul {
-        @apply list-disc list-outside pl-4 text-gray-400;
+        @apply list-disc list-outside pl-4 text-gray-400 mt-2;
     }
     ol {
         @apply list-decimal list-outside pl-4 text-gray-400;

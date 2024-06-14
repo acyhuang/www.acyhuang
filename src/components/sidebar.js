@@ -13,7 +13,7 @@ const Sidebar = () => (
           <li>TRYING TO FIGURE THE REST OUT</li>
       </ul>
     </div>
-    <PostsList / >
+    {/* <PostsList / > */}
   </div>
 );
 
