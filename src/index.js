@@ -10,7 +10,7 @@ import Home from './components/pages/home';
 // import postRoutes from './routes'; // for dynamic routing
 
 import Documate from './components/posts/documate';
-import Calendars from './components/posts/calendars';
+import Products from './components/posts/products';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -18,11 +18,10 @@ root.render(
     <BrowserRouter>
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
-          
           <Route path="/" element={<App />}>
             <Route index element={<Home />} />
             <Route path="documate" element={<Documate />} />
-            <Route path="calendars" element={<Calendars />} />
+            <Route path="products" element={<Products />} />
             {/* {postRoutes} */}
           </Route>
         </Routes>
