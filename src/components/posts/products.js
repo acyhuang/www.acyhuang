@@ -20,7 +20,7 @@ const Post = () => {
       <ul className="space-y-2">
         <li><b><a href="https://retro.app" target="_new">Retro</a></b> — what social media for close friends should be</li>
         <li><b><a href="https://www.yeti.com/drinkware/hydration/chug-bottle-18oz.html" target="_new">Yeti Rambler</a></b> — a water bottle that's easy to keep clean, incredibly robust, and has controlled water flow</li>
-        <li><b><a href="https://crouton.app" target_="new">Crouton</a></b> — one platform for meal planning, grocery lists, and (most importantly for me)live cooking</li>
+        <li><b><a href="https://crouton.app" target_="new">Crouton</a></b> — one platform for meal planning, grocery lists, and (most importantly for me) live cooking</li>
       </ul>
     </div>
   );
