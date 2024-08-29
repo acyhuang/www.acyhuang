@@ -1,5 +1,6 @@
 import React from 'react';
 import PostHeader from '../postHeader';
+import ClickableImage from '../ClickableImage';
 
 import simplifyImg from '../../assets/documate/simplify.png';
 import searchImg from '../../assets/documate/search.png';
@@ -25,15 +26,15 @@ const Documate = () => {
       <p>Documate uses LLMs to parse through documentation, making it easier to navigate and understand. This is done in three ways:</p>
       <p><b>Simplify.</b> Information under headers of the document are summarized into one page, allowing for a general understanding of the product in addition to providing a navigation point.</p>
       <div className='w-full flex justify-center'>
-        <img src={simplifyImg} alt="screenshot" className="max-w-lg w-full"></img>
+        <ClickableImage src={simplifyImg} alt="screenshot" className="max-w-lg w-full"></ClickableImage>
       </div>
       <p><b>Semantic search.</b> Instead of having to know the exact keyword, phrase, or sentence that will bring them to the section they’re looking for, users can search by meaning.</p>
       <div className='w-full flex justify-center'>
-        <img src={searchImg} alt="screenshot" className="max-w-lg w-full"></img>
+        <ClickableImage src={searchImg} alt="screenshot" className="max-w-lg w-full"></ClickableImage>
       </div>
       <p><b>Question and answer.</b> Users can as questions to with a chatbot about how to perform a certain function or better understand what a table, diagram, or graph means.</p>  
       <div className='w-full flex justify-center'>
-        <img src={qaImg} alt="screenshot" className="max-w-lg w-full"></img>
+        <ClickableImage src={qaImg} alt="screenshot" className="max-w-lg w-full"></ClickableImage>
       </div>
       
 
@@ -77,7 +78,7 @@ const Documate = () => {
       <p>Looking back, the final handoff of my prototypes to the developers could’ve been significantly improved — while I had high-fidelity prototypes, they lacked some of the information that would’ve been really helpful to developers when building out the designs (ex. how certain spacing should behave when the window size is changed).</p>
       <p>Regardless I’m proud of our product and grateful for this experience.</p>
       <div className='w-full flex justify-center'>
-        <img src={screensImg} alt="screenshot" className="max-w-lg w-full"></img>
+        <ClickableImage src={screensImg} alt="screenshot" className="max-w-lg w-full"></ClickableImage>
       </div>
 
       <h1>Takeaways</h1>
