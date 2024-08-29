@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const Home = () => (
     <div className='text-container'>
       <h1>hello</h1>
-      <p>I'm Allison, a junior at USC, product-obsessed generalist, and lover of lists. Welcome to my little internet space — currently a work in progress. </p>
+      <p>I'm Allison, a junior at USC, product-obsessed generalist, and lover of lists. Welcome to my little internet space — it's currently a work in progress. </p>
       <p>Some other places where I exist on the internet: <a href="https://www.linkedin.com/in/allisoncyhuang/" target="_new">LinkedIn,</a> <a href="https://github.com/acyhuang" target="_new">Github</a></p>
 
       <h2>previously...</h2>
