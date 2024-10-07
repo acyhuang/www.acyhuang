@@ -10,7 +10,7 @@
         @apply text-xl mt-6 mb-3 text-gray-200;
     }
     p {
-        @apply text-base mt-2 text-gray-400;
+        @apply text-base mt-4 text-gray-400;
     }
     ul {
         @apply list-disc list-outside pl-4 text-gray-400;
