@@ -12,7 +12,7 @@ function App() {
         <div className="max-w-full md:max-w-sm px-4 pt-8 pb-4 sm:px-12 sm:pt-16 border-r border-0 border-gray-700 md:h-screen md:overflow-hidden">
           <Sidebar />
         </div>
-        <div className="flex-1 min-h-screen md:h-full md:overflow-y-scroll">
+        <div className="body-content flex-1 min-h-screen md:h-full md:overflow-y-scroll">
           <Outlet />
         </div>
       </div>

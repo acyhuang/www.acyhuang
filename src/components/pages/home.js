@@ -6,7 +6,7 @@ const Home = () => (
       <h1>hello</h1>
       <p>I'm Allison, a junior at USC, product-obsessed generalist, and lover of lists.</p>
       <p>I'm currently studying an integrated degree in CS, design, and business at the <a href="https://iovine-young.usc.edu/" target="_new">Iovine and Young Academy</a>, reading <i>Homo Deus</i> by Yuval Noah Harari, and trying to figure out the rest.</p>
-      <p>Welcome to my little internet space — it's currently a work in progress. Some other places where I exist on the internet: <a href="https://www.linkedin.com/in/allisoncyhuang/" target="_new">LinkedIn,</a> <a href="https://github.com/acyhuang" target="_new">Github</a></p>
+      <p>Welcome to my little internet space — it's currently a work in progress. Some other places where I exist on the internet: <a href="https://www.linkedin.com/in/allisoncyhuang/" target="_new">LinkedIn</a>, <a href="https://github.com/acyhuang" target="_new">Github</a></p>
 
       <h2>previously...</h2>
       <ul className="space-y-2">

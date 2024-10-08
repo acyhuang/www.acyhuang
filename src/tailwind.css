@@ -36,7 +36,11 @@
     .caption {
         @apply font-sf-mono text-xs uppercase;
     }
-    a {
-        @apply text-gray-300 hover:text-blue-300 hover:underline;
+    
+}
+@layer components {
+    .body-content a {
+        @apply border-b border-dashed pb-0.5 border-gray-600;
+
     }
 }

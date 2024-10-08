@@ -4,7 +4,10 @@ import { Link } from 'react-router-dom';
 
 const Sidebar = () => (
   <div className="space-y-8 font-sf-mono text-sm">
-    <Link to="/" className="font-gothic-a1 text-gray-200 text-6xl font-bold leading-3.3 hover:no-underline">allison huang</Link>
+    <Link to="/" className="font-gothic-a1 text-gray-200 text-4xl font-bold leading-3.3 hover:no-underline">
+      allison<br />
+      huang
+    </Link>
     {/* <div className="space-y-2">
       <p className="text-sm">is currently...</p>
       <ul className="space-y-2">
