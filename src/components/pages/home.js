@@ -11,7 +11,7 @@ const Home = () => (
       <h2>previously...</h2>
       <ul className="space-y-2">
         <li>designed <b><Link to={'./documate'}>Documate</Link></b>, a platform for simplifying hardware documentation</li>
-        <li>investigated LLM-LLM persuasion in highly ambiguous moral decision-making scenarios, accepted to NeurIPS 2024 AdvML-Frontiers workshop (camera-ready copy soon)</li>
+        <li>investigated LLM-LLM persuasion in highly ambiguous moral decision-making scenarios, accepted to NeurIPS 2024 AdvML-Frontiers workshop (preprint coming soon)</li>
         <li>authored a research report characterizing the landscape of open-source language models, as of August 2023: <b><a href="https://drive.google.com/file/d/1q7-2F-vEmGJT4WjW0wFUkeeHGJuL9PtQ/view" target="_new">Open-source LLMs</a></b></li>
         <li>designed and developed <b><a href="https://www.figma.com/proto/qW3tJhmjmaOFNWh6ZDZdYc/ACAD415-binary?page-id=181%3A595&node-id=181-595&scaling=contain&content-scaling=fixed&t=0dS8en3l3HVddZ7e-1" target="_new">Binary</a></b>, a singleplayer iOS game for converting base-10 numbers to binary</li>
       </ul>
