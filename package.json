@@ -15,7 +15,8 @@
     "react-scripts": "^5.0.1",
     "shell-quote": "^1.7.2",
     "web-vitals": "^2.1.4",
-    "webpack-dev-middleware": "^5.3.3"
+    "webpack-dev-middleware": "^5.3.3",
+    "@vercel/analytics": "^0.1.0"
   },
   "optionalDependencies": {
     "fsevents": "^2.3.3"
