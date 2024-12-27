@@ -17,8 +17,9 @@ function App() {
           <Outlet />
         </div>
       </div>
+      <Analytics />
     </div>
-
+    
 
   );
 }
