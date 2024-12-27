@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 const Home = () => (
     <div className='text-container'>
       <h1>hello</h1>
-      <p>I'm Allison, a junior at USC, product-obsessed generalist, and lover of lists.</p>
-      <p>I'm currently studying an integrated degree in CS, design, and business at the <a href="https://iovine-young.usc.edu/" target="_new">Iovine and Young Academy</a>, reading <i>Homo Deus</i> by Yuval Noah Harari, and trying to figure out the rest.</p>
+      <p>I'm Allison, a junior at USC, product-obsessed generalist, and lover of lists. Interested in interfaces for <a href="https://monitor.transluce.org/dashboard/chat" target="_new">observing</a>, <a href="http://preview.goodfire.ai/" target="_new">steering</a>, and <a href="https://www.youtube.com/watch?v=rd-J3hmycQs" target="_new">interacting</a> with generative AI.</p>
+      <p>Currently studying an integrated degree in CS, design, and business at the <a href="https://iovine-young.usc.edu/" target="_new">Iovine and Young Academy</a>, reading <i>Why Nations Fail</i> by Daron Acemoglu and James A. Robinson, and trying to figure out the rest.</p>
       <p>Welcome to my little internet space — it's currently a work in progress. Some other places where I exist on the internet: <a href="https://www.linkedin.com/in/allisoncyhuang/" target="_new">LinkedIn</a>, <a href="https://github.com/acyhuang" target="_new">Github</a>, <a href="https://www.are.na/allison-huang-5ow-m0wjvfu/channels" target="_new">Are.na</a></p>
 
       <h2>previously...</h2>
