@@ -5,12 +5,8 @@ import './index.css';
 import './tailwind.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
 import Home from './components/pages/home';
-// import postRoutes from './routes'; // for dynamic routing
-
-import Documate from './components/posts/documate';
-import Products from './components/posts/products';
+import DynamicPostRouter from './components/DynamicPostRouter';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -20,9 +16,7 @@ root.render(
         <Routes>
           <Route path="/" element={<App />}>
             <Route index element={<Home />} />
-            <Route path="documate" element={<Documate />} />
-            <Route path="products" element={<Products />} />
-            {/* {postRoutes} */}
+            <Route path="/*" element={<DynamicPostRouter />} />
           </Route>
         </Routes>
       </Suspense>

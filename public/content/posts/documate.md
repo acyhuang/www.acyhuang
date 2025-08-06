@@ -1,45 +1,3 @@
-
-import React from 'react';
-import ReactMarkdown from 'react-markdown';
-import PostHeader from '../postHeader';
-import ClickableImage from '../ClickableImage';
-import image1 from '../../assets/documate/simplify.png';
-import image2 from '../../assets/documate/search.png';
-import image3 from '../../assets/documate/qa.png';
-import image4 from '../../assets/documate/screens.png';
-
-const postDetails = {
-  "title": "Documate",
-  "tag": "design",
-  "date": "2.2023 – 4.2023",
-  "description": "Completed in USC's premier product incubator, Lavalab, where we conceived, built, and pitched Documate in eight weeks."
-};
-
-const Documate = () => {
-  const imageMap = {
-    '../../assets/documate/simplify.png': image1,
-    '../../assets/documate/search.png': image2,
-    '../../assets/documate/qa.png': image3,
-    '../../assets/documate/screens.png': image4
-  };
-
-  const components = {
-    img: ({src, alt, ...props}) => (
-      <ClickableImage 
-        src={imageMap[src] || src} 
-        alt={alt} 
-        className="w-full mb-4" 
-        {...props} 
-      />
-    ),
-    p: ({children}) => <p className="mb-4">{children}</p>
-  };
-
-  return (
-    <div className="text-container">
-      <PostHeader {...postDetails} />
-      <ReactMarkdown components={components}>
-        {`
 # Problem: Hardware documentation is really hard to read.
 
 Manuals are full of dense text and diagrams, and they're often hundreds of pages long. This makes it incredibly time-consuming to figure out how to accomplish a specific task with a piece of unfamiliar hardware.
@@ -50,15 +8,15 @@ Documate uses LLMs to parse through documentation, making it easier to navigate 
 
 **Simplify.** Information under headers of the document are summarized into one page, allowing for a general understanding of the product in addition to providing a navigation point.
 
-![Simplify screenshot](../../assets/documate/simplify.png)
+![Simplify screenshot](/assets/documate/simplify.png)
 
 **Semantic search.** Instead of having to know the exact keyword, phrase, or sentence that will bring them to the section they're looking for, users can search by meaning.
 
-![Search screenshot](../../assets/documate/search.png)
+![Search screenshot](/assets/documate/search.png)
 
 **Question and answer.** Users can ask questions to a chatbot about how to perform a certain function or better understand what a table, diagram, or graph means.
 
-![Q&A screenshot](../../assets/documate/qa.png)
+![Q&A screenshot](/assets/documate/qa.png)
 
 # Process: 0 to 1
 
@@ -99,7 +57,7 @@ Looking back, the final handoff of my prototypes to the developers could've been
 
 Regardless I'm proud of our product and grateful for this experience.
 
-![Screens screenshot](../../assets/documate/screens.png)
+![Screens screenshot](/assets/documate/screens.png)
 
 # Takeaways
 
@@ -109,10 +67,4 @@ As someone who had little to no experience with hardware, my understanding of th
 
 ## 2. Prioritize!
 
-Lavalab is only an eight week experience, and we only spent six weeks working as a team on Documate. At any point in time, there was more to do than what we had time to do. We ultimately prioritized the three features our users had expressed a need for, and were able to build those out well enough to demo.`}
-      </ReactMarkdown>
-    </div>
-  );
-};
-
-export default Documate;
+Lavalab is only an eight week experience, and we only spent six weeks working as a team on Documate. At any point in time, there was more to do than what we had time to do. We ultimately prioritized the three features our users had expressed a need for, and were able to build those out well enough to demo.

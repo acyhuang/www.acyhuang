@@ -10,8 +10,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Build for production**: `npm run build` 
   - Uses NODE_OPTIONS=--openssl-legacy-provider for compatibility
 - **Run tests**: `npm test`
-- **Process posts**: `npm run process-posts`
-  - Converts markdown posts to React components
 
 ## Architecture Overview
 
@@ -21,18 +19,18 @@ This is a personal portfolio website built with Create React App and React Route
 
 - **App.js**: Main layout with sidebar and content areas using flexbox
 - **Sidebar**: Contains navigation and posts list, uses custom fonts (SF Mono, Gothic A1)
-- **Home page**: Now uses hybrid markdown system via MarkdownPage component
-- **MarkdownPage component**: Reusable component for runtime markdown loading
-- **Posts system**: Build-time conversion of markdown files to React components
+- **Home page**: Uses runtime markdown system via MarkdownPage component
+- **MarkdownPage component**: Reusable component for runtime markdown loading with frontmatter support
+- **Posts system**: Runtime loading of markdown files with automatic routing
 
 ### Posts Workflow
 
-The site has a unique posts system that converts markdown files to React components:
+The site uses a unified runtime markdown system:
 
-1. **Markdown files** are stored in `/posts/` directory with frontmatter metadata
-2. **processPosts.js script** converts markdown to React components in `/src/components/posts/`
-3. **Generated components** use ReactMarkdown with custom image handling via ClickableImage
-4. **Routes** are manually defined in `index.js` (dynamic routing code exists but is commented out)
+1. **Markdown files** are stored in `/public/content/posts/` directory with frontmatter metadata
+2. **Posts manifest** (`/public/content/posts/index.json`) contains post metadata for discovery
+3. **PostPage component** dynamically loads markdown content using MarkdownPage
+4. **Routes** are automatically generated from the posts manifest
 
 ### Styling
 
@@ -43,24 +41,24 @@ The site has a unique posts system that converts markdown files to React compone
 
 ### Content Management
 
-**Two-tiered system:**
+**Unified runtime system:**
 
-1. **Runtime markdown loading** (for pages like Home):
-   - Markdown files stored in `/public/content/` directory
-   - Loaded at runtime using MarkdownPage component via fetch API
-   - Enables hot reloading during development
-   - Custom ReactMarkdown components handle internal/external links and styling
-
-2. **Build-time conversion** (for posts):
-   - Post metadata is extracted from markdown frontmatter
-   - Images in posts are automatically imported and mapped for proper bundling
-   - Posts list is dynamically generated from available post components
+- **Static pages**: Markdown files in `/public/content/` (e.g., home.md)
+- **Blog posts**: Markdown files in `/public/content/posts/` with frontmatter metadata
+- **Runtime loading**: All content loaded via MarkdownPage component using fetch API
+- **Full image support**: 
+  - Asset images: Use `/assets/image.png` paths (served from `/public/assets/`)
+  - Dynamic imports: Still supported for src/assets via existing imageUtils.js
+- **Hot reloading**: Immediate changes during development
+- **Automatic routing**: Posts routes generated from manifest file
+- **ClickableImage integration**: All images are enlargeable on click
+- **Performance optimizations**: Image caching, memoized components
 
 ## Important Notes
 
 - Uses legacy OpenSSL provider flag due to Create React App compatibility
 - Vercel Analytics is integrated
-- Some dynamic routing code exists but is disabled in favor of manual route definitions
+- Uses dynamic routing based on posts manifest for automatic route generation
 
 ## Content Editing Workflows
 
@@ -70,12 +68,20 @@ The site has a unique posts system that converts markdown files to React compone
 3. No build step required
 
 **For blog posts:**
-1. Create/edit markdown files in `/posts/` directory
-2. Run `npm run process-posts` to generate React components
-3. Manually add routes to `src/index.js` if needed
+1. Create markdown files in `/public/content/posts/` with frontmatter
+2. Update `/public/content/posts/index.json` with post metadata
+3. Changes are reflected immediately with hot reloading
+4. Routes are automatically generated - no manual route addition needed
 
 **Using MarkdownPage component:**
 ```javascript
 import MarkdownPage from '../MarkdownPage';
 const MyPage = () => <MarkdownPage contentPath="filename.md" />;
 ```
+
+**Image handling in runtime markdown:**
+- **Public images**: Use absolute paths like `/assets/image.png` (stored in `/public/assets/`) - loaded directly
+- **Asset images**: Use relative paths like `../../assets/image.png` - automatically bundled via dynamic imports (legacy support)
+- **External images**: Use full URLs - loaded directly
+- All images use ClickableImage component with zoom functionality
+- Missing images show appropriate error states with loading indicators
