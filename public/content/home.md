@@ -1,8 +1,8 @@
 # hello
 
-I'm Allison, a senior at USC, product-obsessed generalist, and lover of lists. Currently studying an integrated degree in CS, design, and business at the [Iovine and Young Academy](https://iovine-young.usc.edu/), reading *[something]*, and trying to figure out the rest.
+I'm Allison, a senior at USC, product-obsessed generalist, and lover of lists. Currently studying an integrated degree in CS, design, and business at the [Iovine and Young Academy](https://iovine-young.usc.edu/), reading *Stay True* by Hua Hsu, and trying to figure out the rest.
 
-Welcome to my little internet space — it's currently a work in progress. Some other places where I exist online: [LinkedIn](https://www.linkedin.com/in/allisoncyhuang/), [Github](https://github.com/acyhuang), [Are.na](https://www.are.na/allison-huang-5ow-m0wjvfu/channels)
+Other places where I exist online: [LinkedIn](https://www.linkedin.com/in/allisoncyhuang/), [Github](https://github.com/acyhuang), [Are.na](https://www.are.na/allison-huang-5ow-m0wjvfu/channels)
 
 ## problems I'm interested in (all loosely related)
 - Designing intuitive interfaces for observing and steering large language models ([WIP](https://github.com/acyhuang/steering-interface))
