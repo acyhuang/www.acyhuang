@@ -5,7 +5,7 @@ interface ProjectCardProps {
   description: string
   date: string
   slug: string
-  cover: string
+  cover?: string
   tags: string[]
 }
 
