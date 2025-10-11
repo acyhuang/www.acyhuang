@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Navigate } from 'react-router-dom'
 import { MDXRenderer } from '../components/MDXRenderer'
 import { getProjectBySlug, type Project as ProjectType } from '../lib/projects'
+import { Badge } from '../components/Badge'
 
 /**
  * Project detail page - displays individual project content
@@ -48,8 +49,13 @@ export function Project() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">{metadata.title}</h1>
-        <p className="text-muted-foreground">{metadata.date}</p>
+        <h1 className="text-3xl font-semibold mb-2">{metadata.title}</h1>
+        <p className="text-sm font-mono text-muted-foreground">{metadata.date}</p>
+         <div className="flex flex-wrap gap-2 mt-2">
+          {metadata.tags.map((tag) => (
+            <Badge key={tag}>{tag}</Badge>
+          ))}
+        </div>
       </div>
 
       <MDXRenderer>

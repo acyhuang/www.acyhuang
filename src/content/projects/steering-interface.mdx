@@ -1,16 +1,45 @@
 ---
 title: "LLM steering interface"
-description: "An interface for steering LLMs using Goodfire's Ember SDK (IASDR 2025)"
-date: "October 2025"
+description: "Interface for steering features in LLMs using Goodfire's Ember SDK (IASDR 2025)"
+date: "15 weeks | APR 2025"
 slug: "steering-interface"
-cover: "/projects/steering-interface/cover.PNG"
+cover: 
 tags: ["design", "development", "digital"]
-pinned: false
+pinned: true
 show: true
 ---
 
-### We currently use prompting to alter the behavior of LLMs.
+![cover](/projects/steering-interface/cover.png)
 
-prompting 
-blah blah blah 
+We currently use prompting to alter the behavior of LLMs. "Be more creative," "Respond as a tutor", "Don't talk about [X]." 
+
+- What if, instead, we had knobs or sliders to control symbolic concepts (features) in the model? 
+- What would an interface enabling this interaction look like? 
+- And in what cases might it make eliciting desired outputs from the LLM easier?
+
+### We prototyped an interface for "steering" on features within an LLM.
+
+A feature is a symoblic concept that the LLM has learned, e.g. *simplifying complex topics*, or for *mentions of chickens*.
+
+Our implementation relies on features extracted by training sparse autoencoders. Specifically, we use [Goodfire's Ember SDK](https://www.goodfire.ai/blog/announcing-goodfire-ember). However,  our design findings should be broadly applicable to any interface that has access to features of a model, regardless of mechanism. 
+
+Our interface was inspired by [Goodfire](https://www.platform.goodfire.ai), [Transluce's Monitor](https://monitor.transluce.org/dashboard/chat), [Neuronpedia](https://www.neuronpedia.org), and [Tilde's Stargazer](https://stars.tilderesearch.com).
+
+{/* [debug interface, meant for power users] gave us a lot of ideas on how to build more intuitive intefaces (notes below) */}
+
+Key design decisions included:
+
+- **Surfacing features actively influencing the LLM's outputs as "activated features":** This helps the user build a better mental model of the LLM and why it produces certain repsonses. It simultaneously prompts the user with examples of features they can adjust. 
+- **Comparing responses before and after steering:** aA side-by-side comparison shows how steering directly affects outputs.
+- **Automatically suggesting features to steer:** There are tens of thousands of features in a model, so suggestions give users somewhere to start.
+
+![steering demo](/projects/steering-interface/steer.gif)
+
+
+### So, is it useful?
+
+We're currently conducting a summative assessment of the interface. We'll update soon with results and ideas for future work (of which there are already many).
+
+We'll also be presenting at IASDR 2025 in Taipei!
+
 

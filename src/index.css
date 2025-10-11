@@ -38,6 +38,10 @@
   box-sizing: border-box;
 }
 
+html {
+  background-color: var(--background);
+}
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, sans-serif;
@@ -49,6 +53,10 @@ strong, b, .font-bold {
   color: var(--foreground) !important;
 }
 
+.font-mono {
+  @apply uppercase;
+}
+
 .prose {
   @apply leading-snug;
 }
@@ -56,6 +64,6 @@ strong, b, .font-bold {
   @apply text-3xl font-medium;
 }
 
-.prose a {
-  @apply underline;
-}
+/* .prose a {
+  @apply ;
+} */

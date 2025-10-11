@@ -12,7 +12,7 @@ function App() {
 
   useEffect(() => {
     // Check localStorage for saved preference
-    const savedTheme = localStorage.getItem('theme') as Theme | null
+    const savedTheme = localStorage.getItem('darkMode') as Theme | null
     
     if (savedTheme) {
       setTheme(savedTheme)
@@ -44,7 +44,7 @@ function App() {
     <BrowserRouter>
       <div className="min-h-screen bg-background text-foreground">
           <Nav theme={theme} onToggleTheme={toggleTheme} />
-        <div className="max-w-lg mx-auto p-4 mt-4">
+        <div className="max-w-lg mx-auto p-4 mt-4 mb-8">
           <Routes>
             <Route path="/" element={<Work />} />
             <Route path="/about" element={<About />} />

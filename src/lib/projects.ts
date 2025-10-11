@@ -6,7 +6,7 @@ export interface ProjectMetadata {
   description: string
   date: string
   slug: string
-  cover: string
+  cover?: string
   tags: string[]
   pinned: boolean
   show: boolean

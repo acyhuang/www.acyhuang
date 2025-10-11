@@ -16,10 +16,10 @@ export function Nav({ theme, onToggleTheme }: NavProps) {
   const isActive = (path: string) => location.pathname === path
   
   return (
-    <nav className="flex justify-end items-center space-x-4 px-4 py-3 border-b border-red-500">
+    <nav className="flex justify-end items-center space-x-4 px-4 py-3">
       <Link 
         to="/" 
-        className={`text-sm font-mono ${
+        className={`text-sm font-mono py-2 px-3 ${
           isActive('/') ? 'font-medium' : 'text-muted-foreground hover:underline'
         }`}
       >
@@ -27,7 +27,7 @@ export function Nav({ theme, onToggleTheme }: NavProps) {
       </Link>
       <Link 
         to="/about" 
-        className={`text-sm font-mono ${
+        className={`text-sm font-mono py-2 px-3 ${
           isActive('/about') ? 'font-medium' : 'text-muted-foreground hover:underline'
         }`}
       >
@@ -35,7 +35,7 @@ export function Nav({ theme, onToggleTheme }: NavProps) {
       </Link>
       <button
         onClick={onToggleTheme}
-        className="h-8 w-8 inline-flex items-center justify-center rounded-lg text-foreground hover:bg-muted transition-colors"
+        className="h-8 w-8 inline-flex items-center justify-center rounded-lg text-muted-foreground hover:bg-muted transition-colors"
         aria-label="Toggle theme"
       >
         {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
