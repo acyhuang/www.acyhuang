@@ -3,13 +3,13 @@ title: "LLM steering interface"
 description: "Interface for steering features in LLMs using Goodfire's Ember SDK (IASDR 2025)"
 date: "15 weeks | APR 2025"
 slug: "steering-interface"
-cover: 
+cover: /projects/steering-interface/thumbnail.png
 tags: ["design", "development", "digital"]
 pinned: true
 show: true
 ---
 
-![cover](/projects/steering-interface/cover.png)
+![cover](/projects/steering-interface/thumbnail.png)
 
 We currently use prompting to alter the behavior of LLMs. "Be more creative," "Respond as a tutor", "Don't talk about [X]." 
 
@@ -31,8 +31,8 @@ Our interface was inspired by [Goodfire](https://www.platform.goodfire.ai), [Tra
 
 Key design decisions included:
 
-- **Surfacing features actively influencing the LLM's outputs as "activated features":** This helps the user build a better mental model of the LLM and why it produces certain repsonses. It simultaneously prompts the user with examples of features they can adjust. 
-- **Comparing responses before and after steering:** aA side-by-side comparison shows how steering directly affects outputs.
+- **Surfacing features actively influencing the LLM's outputs (over the entire conversation) as "activated features":** This helps the user build a better mental model of the LLM and why it produces certain repsonses. It simultaneously prompts the user with examples of features they can adjust. 
+- **Comparing responses before and after steering:** A side-by-side comparison shows how steering directly affects outputs.
 - **Automatically suggesting features to steer:** There are tens of thousands of features in a model, so suggestions give users somewhere to start.
 
 ![steering demo](/projects/steering-interface/steer.gif)

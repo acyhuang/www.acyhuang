@@ -9,6 +9,23 @@ pinned: false
 show: true
 ---
 
-Short writeup coming soon. For now, see [Github](https://github.com/acyhuang/chat-tree) and my [tweet](https://x.com/allisoncyhuang/status/1964901642882752651).
+Github: [chat-tree](https://github.com/acyhuang/chat-tree)
+
+### Context is key.
+
+To get the best possible results from LLMs, they should have access to relevant context. 
+
+However, conversations aren't always linear. Sometimes, I have several unrelated follow up questions after a single LLM output, and asking them sequentially dilutes the context.
+
+### What if we represented conversations as trees?
+
+Each exchange (a user query and it's corresponding assistant response) is represented as a node. 
+
+This enables the following:
+- **Branching:** Each node can have multiple children. This can be used for quick side questions, or entirely new conversations. 
+- **Merging:** (Not yet implemented) Divergent branches could be combined back together to include both branches in context. 
+- **Versioning:** Each path from the root node to a leaf node is a separate version of the conversation. The tree becomes a navigation tool for switching between paths.
+
+See a demo:
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">my take on branching conversations: trees! <a href="https://t.co/4NwsEhXMm2">https://t.co/4NwsEhXMm2</a> <a href="https://t.co/r8nkLEudHj">pic.twitter.com/r8nkLEudHj</a></p>&mdash; allison huang (@allisoncyhuang) <a href="https://twitter.com/allisoncyhuang/status/1964901642882752651?ref_src=twsrc%5Etfw">September 8, 2025</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
