@@ -1,4 +1,4 @@
-import { ImgHTMLAttributes } from 'react'
+import type { ImgHTMLAttributes } from 'react'
 
 interface ClickableImageProps extends ImgHTMLAttributes<HTMLImageElement> {
   onImageClick: (src: string) => void
