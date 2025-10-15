@@ -35,7 +35,7 @@ export function Work() {
       ) : projects.length === 0 ? (
         <p className="text-muted-foreground">No projects to display yet.</p>
       ) : ( 
-        <div className="space-y-4">
+        <div className="">
           {projects.map((project) => (
             <ProjectCard
               key={project.slug}
