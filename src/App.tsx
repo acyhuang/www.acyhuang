@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { MDXProvider } from '@mdx-js/react'
+import { Analytics } from '@vercel/analytics/react';
 import { Nav } from './components/Nav'
 import { Work } from './pages/Work'
 import { About } from './pages/About'
@@ -76,6 +77,7 @@ function App() {
           </div>
           <ImageOverlay imageSrc={currentImageSrc} onClose={closeImage} />
         </div>
+        <Analytics/>
       </BrowserRouter>
     </MDXProvider>
   )
