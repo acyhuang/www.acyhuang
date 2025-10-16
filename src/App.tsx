@@ -6,14 +6,16 @@ import { Nav } from './components/Nav'
 import { Work } from './pages/Work'
 import { About } from './pages/About'
 import { Project } from './pages/Project'
-import { ImageOverlay } from './components/ImageOverlay'
-import { ClickableImage } from './components/ClickableImage'
+import { MediaOverlay } from './components/MediaOverlay'
+import { ClickableImage, ClickableVideo } from './components/ClickableMedia'
+import { Video } from './components/Video'
 
 type Theme = 'light' | 'dark'
 
 function App() {
   const [theme, setTheme] = useState<Theme>('light')
-  const [currentImageSrc, setCurrentImageSrc] = useState<string | null>(null)
+  const [currentMediaSrc, setCurrentMediaSrc] = useState<string | null>(null)
+  const [currentMediaType, setCurrentMediaType] = useState<'image' | 'video' | null>(null)
 
   useEffect(() => {
     // Check localStorage for saved preference
@@ -45,22 +47,34 @@ function App() {
     setTheme(prev => prev === 'light' ? 'dark' : 'light')
   }
 
-  const openImage = (src: string) => {
-    setCurrentImageSrc(src)
+  const openMedia = (src: string, type: 'image' | 'video') => {
+    setCurrentMediaSrc(src)
+    setCurrentMediaType(type)
   }
 
-  const closeImage = () => {
-    setCurrentImageSrc(null)
+  const closeMedia = () => {
+    setCurrentMediaSrc(null)
+    setCurrentMediaType(null)
   }
 
-  // Create custom image component with handlers bound
+  // Create custom media components with handlers bound
   const CustomImage = (props: any) => (
-    <ClickableImage {...props} onImageClick={openImage} />
+    <ClickableImage {...props} onMediaClick={openMedia} />
+  )
+
+  const CustomVideo = (props: any) => (
+    <ClickableVideo {...props} onMediaClick={openMedia} />
+  )
+
+  const CustomCapitalVideo = (props: any) => (
+    <Video {...props} onMediaClick={openMedia} />
   )
 
   // MDX component overrides that apply globally
   const mdxComponents = {
     img: CustomImage,
+    video: CustomVideo,
+    Video: CustomCapitalVideo,
   }
 
   return (
@@ -75,7 +89,7 @@ function App() {
               <Route path="/work/:slug" element={<Project />} />
             </Routes>
           </div>
-          <ImageOverlay imageSrc={currentImageSrc} onClose={closeImage} />
+          <MediaOverlay mediaSrc={currentMediaSrc} mediaType={currentMediaType} onClose={closeMedia} />
         </div>
         <Analytics/>
       </BrowserRouter>
