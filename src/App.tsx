@@ -82,7 +82,7 @@ function App() {
       <BrowserRouter>
         <div className="min-h-screen bg-background text-foreground">
             <Nav theme={theme} onToggleTheme={toggleTheme} />
-          <div className="max-w-lg mx-auto p-4 mt-4 mb-16">
+          <div className="max-w-xl mx-auto p-4 mt-4 mb-16">
             <Routes>
               <Route path="/" element={<Work />} />
               <Route path="/about" element={<About />} />
