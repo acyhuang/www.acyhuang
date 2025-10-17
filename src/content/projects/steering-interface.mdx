@@ -18,10 +18,11 @@ We currently use prompting to alter the behavior of LLMs. "Be more creative," "R
 - And in what cases might it make eliciting desired outputs from the LLM easier?
 
 Github: [steering-interface](https://github.com/acyhuang/steering-interface)
+Paper: coming soon!
 
 ### We prototyped an interface for "steering" on features within an LLM.
 
-A feature is a symoblic concept that the LLM has learned, e.g. *simplifying complex topics*, or for *mentions of chickens*.
+A feature is a concept that the LLM has learned, e.g. *simplifying complex topics*, or for *mentions of chickens*.
 
 Our implementation relies on features extracted by training sparse autoencoders. Specifically, we use [Goodfire's Ember SDK](https://www.goodfire.ai/blog/announcing-goodfire-ember). However,  our design findings should be broadly applicable to any interface that has access to features of a model, regardless of mechanism. 
 
@@ -31,7 +32,7 @@ Our interface was inspired by [Goodfire](https://platform.goodfire.ai/sign-in), 
 
 Key design decisions included:
 
-- **Surfacing features actively influencing the LLM's outputs (over the entire conversation) as "activated features":** This helps the user build a better mental model of the LLM and why it produces certain repsonses. It simultaneously prompts the user with examples of features they can adjust. 
+- **Surfacing features actively influencing the LLM's outputs (over the entire conversation) as "activated features":** This helps the user build a better mental model of the LLM and why it produces certain responses. It simultaneously prompts the user with examples of features they can adjust. 
 - **Comparing responses before and after steering:** A side-by-side comparison shows how steering directly affects outputs.
 - **Automatically suggesting features to steer:** There are tens of thousands of features in a model, so suggestions give users somewhere to start.
 
@@ -40,9 +41,28 @@ Key design decisions included:
 </Video>
 
 
-### So, is it useful?
+### We tested with six daily users of LLMs platforms.
 
-We're currently conducting a summative assessment of the interface. We'll update soon with results and ideas for future work (of which there are already many).
+Our testers use LLMs 2–32 times daily and have varying technical knowledge and experience customizing LLMs. We found that:
 
-We'll also be presenting at IASDR 2025 in Taipei!
+#### Steering is more cumbersome than prompting...
+Users noted that steering required a long string of steps: identifying desired behavior, searching for related features, reading through a number of related features to identify one to steer on, then deciding how much to steer it. 
+
+In most cases, prompting with the search string produced a similar result.
+
+Prompting has also become a more intuitive process for users since it's similar to the way we talk to people. If we've told someone to "be creative" and they aren't, it's not hard to try other ways to elicit this behavior, e.g. "think outside the box." 
+
+#### ...but steering is valuable in two key ways.
+1. **Combats the blank slate problem in prompting.** Seeing lists of activated features or search results gave users more insight into what the LLM "knows." They also serve as a starting point for steering by providing examples of features and prompting users to think about other features or behaviors they wanted to elicit from the LLM. 
+
+2. **Gives users precise control over the LLM.** The specificity of the features and ability to steer them on a continuous scale allowed for very targeted interventions and made users feel like they had more control over the LLM.
+
+### On making it better...
+Our implementation is similar to a developer tool — it provides as much information as possible, and doesn't try to abstract away any complexity. 
+
+However, a primary challenge for users was that finding the right feature is hard. Because features are so narrow, the number of features is overwhelming and they all have long names. Semantic search helps but remains cognitively demanding — users must carefully read and evaluate results that may look completely dissimilar. 
+
+Abstracting features into broader categories would make features easier to sort through. But it's unclear what level of abstraction provides the right balance of usability and usefulness.
+
+Read the full paper (coming soon!) for more discussion.
 
