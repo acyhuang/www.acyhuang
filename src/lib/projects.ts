@@ -4,11 +4,11 @@
 export interface ProjectMetadata {
   title: string
   description: string
-  date: string
+  time: string
   slug: string
   cover?: string
   tags: string[]
-  pinned: boolean
+  order: number
   show: boolean
 }
 
@@ -48,15 +48,8 @@ export async function getProjects(): Promise<ProjectMetadata[]> {
     }
   }
 
-  // Sort: pinned first, then by date (most recent first)
-  projects.sort((a, b) => {
-    if (a.pinned && !b.pinned) return -1
-    if (!a.pinned && b.pinned) return 1
-    
-    // Compare dates (assuming format like "October 2024")
-    // For proper date sorting, you might want to use a date parsing library
-    return b.date.localeCompare(a.date)
-  })
+  // Sort by order ascending (lowest number first)
+  projects.sort((a, b) => a.order - b.order)
 
   return projects
 }

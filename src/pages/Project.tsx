@@ -50,7 +50,7 @@ export function Project() {
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-semibold mb-2">{metadata.title}</h1>
-        <p className="text-sm font-mono text-muted-foreground">{metadata.date}</p>
+        <p className="text-sm font-mono text-muted-foreground">{metadata.time}</p>
          <div className="flex flex-wrap gap-2 mt-2">
           {metadata.tags.map((tag) => (
             <Badge key={tag}>{tag}</Badge>
