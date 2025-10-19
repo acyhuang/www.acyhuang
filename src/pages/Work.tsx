@@ -41,7 +41,7 @@ export function Work() {
               key={project.slug}
               title={project.title}
               description={project.description}
-              date={project.date}
+              time={project.time}
               slug={project.slug}
               cover={project.cover}
               tags={project.tags}
