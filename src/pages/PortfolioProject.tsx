@@ -50,19 +50,12 @@ export function PortfolioProject() {
   return (
     <div className="w-screen relative left-1/2 right-1/2 -mx-[50vw] px-4">
       <div className="mx-auto mb-4 text-sm font-mono md:px-6">
-        <Link to="/portfolio" className="text-muted-foreground">
+        <Link to="/portfolio" className="text-muted-foreground hover:underline">
         ← PORTFOLIO 
         </Link>
       </div>
 
       <div className="max-w-2xl mx-auto">
-        {/* <div className="mx-auto mb-4 text-sm">
-          <Link to="/portfolio" className="text-muted-foreground">
-            Portfolio 
-          </Link>
-          <span> / {metadata.slug}</span>
-        </div> */}
-
         <div className="mb-8">
             <h1 className="text-3xl font-semibold mb-2">{metadata.title}</h1>
             <p className="text-sm font-mono text-muted-foreground">{metadata.time}</p>
@@ -77,11 +70,11 @@ export function PortfolioProject() {
             <Content />
         </MDXRenderer>
 
-        <div className="mx-auto mt-16 text-muted-foreground text-sm font-mono text-center">
+        <div className="mx-auto mt-16 text-muted-foreground text-sm font-mono text-center hover:underline">
           <Link to="/portfolio">
               Back to Portfolio
           </Link>
-      </div>
+        </div>
       </div>
     </div>
   )
