@@ -25,7 +25,6 @@ export interface Project {
  * Filters by show: true and sorts by pinned, then date
  */
 export async function getProjects(): Promise<ProjectMetadata[]> {
-  // Import all MDX files from projects directory
   const modules = import.meta.glob<{
     default: React.ComponentType
     frontmatter?: ProjectMetadata
@@ -36,8 +35,6 @@ export async function getProjects(): Promise<ProjectMetadata[]> {
   for (const path in modules) {
     const module = modules[path]
     
-    // Try to extract metadata from the module
-    // Note: We'll need to configure MDX to export frontmatter
     if (module.frontmatter) {
       const metadata = module.frontmatter
       
@@ -53,6 +50,30 @@ export async function getProjects(): Promise<ProjectMetadata[]> {
 
   return projects
 }
+
+export async function getPortfolioProjects(): Promise<ProjectMetadata[]> {
+  const projects: ProjectMetadata[] = []
+
+  const modules = import.meta.glob<{
+    default: React.ComponentType
+    frontmatter?: ProjectMetadata
+  }>('../content/projects/*.mdx', { eager: true })
+
+  for (const path in modules) {
+    const module = modules[path]
+    
+    if (module.frontmatter) {
+      const metadata = module.frontmatter
+      projects.push(metadata)
+    }
+  }
+
+  // Sort by order ascending (lowest number first)
+  projects.sort((a, b) => a.order - b.order)
+
+  return projects
+}
+
 
 /**
  * Get a single project by slug
