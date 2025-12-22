@@ -1,0 +1,56 @@
+---
+title: "Documate"
+description: "Simplifying hardware documentation"
+time: "8 WKS | APR 2023"
+slug: "documate"
+cover: /projects/documate/cover.webp
+tags: ["design", "digital"]
+order: 3
+show: false
+---
+
+I designed the brand identity and UI for Documate as the designer on a team of four. This project was conceived and built in 8 weeks as part of a USC product incubator.
+
+### Problem: Hardware documentation is really hard to read.
+
+Manuals are full of dense text and diagrams, and they're often hundreds of pages long. This makes it incredibly time-consuming to figure out how to accomplish a specific task with a piece of unfamiliar hardware.
+
+### Solution: Simplify, search, and query.
+
+Documate uses LLMs to parse through documentation, making it easier to navigate and understand. This is done in three ways:
+
+**Simplify.** Information under headers of the document are summarized into one page, allowing for a general understanding of the product in addition to providing a navigation point.
+
+![Simplify screenshot](/projects/documate/simplify.webp)
+
+**Semantic search.** Instead of having to know the exact keyword, phrase, or sentence that will bring them to the section they're looking for, users can search by meaning.
+
+![Search screenshot](/projects/documate/search.webp)
+
+**Question and answer.** Users can ask questions to a chatbot about how to perform a certain function or better understand what a table, diagram, or graph means.
+
+![Q&A screenshot](/projects/documate/qa.webp)
+
+### Understanding our users
+
+To validate the problem, we interviewed several hardware engineers and found the following trends:
+
+- Finding documentation for a given product is easy.
+- Navigating to the right part of documentation is hard. The language is dense, and manuals are long.
+  - Sometimes, a user may not know the proper terminology to describe the function or feature they're looking for information on.
+- Engineers look to documentation to:
+  1. Get an overall understanding of how to use a piece of hardware
+  2. Understand whether a certain use case is possible, and if so, how to achieve it
+- Forums and YouTube are a common alternative to documentation because they are easier to understand and may be more specific to the desired use case.
+
+Based on the way these engineers approach hardware, we designed a user flow that would feel intuitive to them. This was split into two phases: first, processing the document on our end, then allowing users to query it.
+
+### Building features based on the desired benefits
+
+Our findings from user interviews translated into concrete features.
+
+- Desire to understand the overall function of a piece of hardware. **→** Summary page that compiles the most important information from a manual, e.g. what each button does.
+- Desire to be able to find information about a feature or function even if you don't know the correct terminology for it. **→** Semantic search allows users to search by meaning, so they'll get their desired results even if they aren't using the proper keywords.
+- Desire to quickly figure out whether a certain use case is possible. **→** Q&A feature to allow users to query the manual. All answers cite the respective page number of the manual, so even if the answer isn't complete, the user now knows where to look.
+
+![Screens](/projects/documate/cover.webp)
