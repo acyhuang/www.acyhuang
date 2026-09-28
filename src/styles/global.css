@@ -3,6 +3,13 @@
 
 @layer base {
   :root {
+    color-scheme: light dark;
+    --page-background: var(--color-white);
+    --page-text: var(--color-black);
+    --prose-text: var(--color-neutral-700);
+    --panel-border: var(--color-neutral-200);
+    --link-highlight: var(--color-neutral-200);
+    --focus-ring: var(--color-black);
     font-family: Helvetica Neue, sans-serif;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -13,13 +20,14 @@
   }
 
   body {
-    color: black;
+    color: var(--page-text);
+    background-color: var(--page-background);
     margin: 0;
     overflow: hidden;
   }
 
   a {
-    color: black;
+    color: inherit;
     text-decoration-color: #8a8a8a;
     text-underline-offset: 0.16em;
   }
@@ -40,7 +48,7 @@
   font-weight: inherit;
 }
 
-a[data-note-link] {
+:is(a[data-note-link], a[data-link-kind="external"]) {
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
   transition:
@@ -48,34 +56,52 @@ a[data-note-link] {
     background-color 100ms ease;
 }
 
-a[data-note-link]:focus-visible,
+:is(a[data-note-link], a[data-link-kind="external"]):focus-visible,
 a[data-note-link][aria-expanded="true"] {
   color: inherit;
-  background-color: #e5e5e5;
+  background-color: var(--link-highlight);
   text-decoration-color: currentColor;
   outline: none;
 }
 
-a[data-note-link]:focus-visible {
-  box-shadow: 0 0 0 2px white, 0 0 0 4px black;
+:is(a[data-note-link], a[data-link-kind="external"]):focus-visible {
+  box-shadow:
+    0 0 0 2px var(--page-background),
+    0 0 0 4px var(--focus-ring);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page-background: var(--color-neutral-950);
+    --page-text: var(--color-neutral-300);
+    --prose-text: var(--color-neutral-300);
+    --panel-border: var(--color-neutral-800);
+    --link-highlight: var(--color-neutral-700);
+    --focus-ring: var(--color-neutral-100);
+  }
 }
 
 @media (hover: hover) and (pointer: fine) {
-  a[data-note-link]:hover {
+  :is(a[data-note-link], a[data-link-kind="external"]):hover {
     color: inherit;
-    background-color: #e5e5e5;
+    background-color: var(--link-highlight);
     text-decoration-color: currentColor;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  a[data-note-link] {
+  :is(a[data-note-link], a[data-link-kind="external"]) {
     transition-duration: 0ms;
   }
 }
 
 .note-prose {
-  @apply prose prose-neutral max-w-none;
+  @apply prose prose-neutral max-w-none dark:prose-invert;
+  --tw-prose-body: var(--prose-text);
+  --tw-prose-headings: var(--prose-text);
+  --tw-prose-lead: var(--prose-text);
+  --tw-prose-links: var(--prose-text);
+  --tw-prose-bold: var(--prose-text);
   font-size: 1.05rem;
   line-height: 1.4;
 }

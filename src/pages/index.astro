@@ -17,14 +17,14 @@ const renderedNotes = await Promise.all(
     data-panel-viewport
   >
     <section
-      class="relative grid h-dvh min-h-0 w-screen flex-[0_0_100vw] snap-start grid-rows-[auto_minmax(min-content,1fr)_auto] gap-y-16 overflow-y-auto bg-white px-6 pt-6 pb-0 md:sticky md:left-0 md:z-10 md:w-auto md:flex-[0_0_clamp(22rem,33.333vw,42rem)] md:px-[clamp(2rem,5vw,6rem)] md:pt-[clamp(2rem,5vw,6rem)] md:pb-0"
+      class="relative grid h-dvh min-h-0 w-screen flex-[0_0_100vw] snap-start grid-rows-[auto_minmax(min-content,1fr)_auto] gap-y-16 overflow-y-auto bg-[var(--page-background)] px-6 pt-6 pb-0 md:sticky md:left-0 md:z-10 md:w-auto md:flex-[0_0_clamp(22rem,33.333vw,42rem)] md:px-[clamp(2rem,5vw,6rem)] md:pt-[clamp(2rem,5vw,6rem)] md:pb-0"
       data-home-panel
       aria-label="Home"
     >
       <a class="w-fit text-base font-bold no-underline" href="/" aria-label="Home">allison huang</a>
       <div class="note-prose self-center"><HomeContent /></div>
       <nav
-        class="flex gap-4 pb-6 text-sm md:pb-[clamp(2rem,5vw,6rem)] [&_a:hover]:underline [&_a]:no-underline"
+        class="flex gap-4 pb-6 text-sm md:pb-[clamp(2rem,5vw,6rem)] [&_a]:no-underline"
         aria-label="External links"
       >
         <a href="https://x.com/allisoncyhuang/" target="_blank" rel="noreferrer">X</a>

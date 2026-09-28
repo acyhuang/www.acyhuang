@@ -8,12 +8,12 @@ const { slug, title } = Astro.props
 ---
 
 <article
-  class="note-panel relative hidden min-h-dvh w-screen flex-[0_0_100vw] snap-start items-start overflow-y-auto px-6 pt-20 pb-8 data-[mounted=true]:flex md:w-auto md:flex-[0_0_clamp(22rem,33.333vw,42rem)] md:items-center md:border-l md:border-neutral-300 md:p-[clamp(2rem,5vw,6rem)]"
+  class="note-panel relative hidden min-h-dvh w-screen flex-[0_0_100vw] snap-start items-start overflow-y-auto px-6 pt-20 pb-8 data-[mounted=true]:flex md:w-auto md:flex-[0_0_clamp(22rem,33.333vw,42rem)] md:items-center md:border-l md:border-[var(--panel-border)] md:p-[clamp(2rem,5vw,6rem)]"
   data-note={slug}
   aria-label={title}
 >
   <button
-    class="absolute top-5 left-6 inline-flex cursor-pointer items-center gap-1.5 border-0 bg-transparent p-0 text-black [font:inherit] md:hidden"
+    class="absolute top-5 left-6 inline-flex cursor-pointer items-center gap-1.5 border-0 bg-transparent p-0 text-current [font:inherit] md:hidden"
     type="button"
     data-panel-back
     aria-label="Go back"
