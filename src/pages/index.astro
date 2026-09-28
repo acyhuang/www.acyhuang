@@ -1,0 +1,219 @@
+---
+import { getCollection, render } from 'astro:content'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import NotePanel from '../components/NotePanel.astro'
+import HomeContent from '../content/home.mdx'
+
+const notes = (await getCollection('notes', ({ data }) => data.published))
+  .sort((a, b) => a.data.title.localeCompare(b.data.title))
+const renderedNotes = await Promise.all(
+  notes.map(async (note) => ({ note, Content: (await render(note)).Content })),
+)
+---
+
+<BaseLayout>
+  <main
+    class="flex h-dvh w-screen snap-x snap-mandatory overflow-x-auto overflow-y-auto md:snap-proximity"
+    data-panel-viewport
+  >
+    <section
+      class="relative grid h-dvh min-h-0 w-screen flex-[0_0_100vw] snap-start grid-rows-[auto_minmax(min-content,1fr)_auto] gap-y-16 overflow-y-auto bg-white px-6 pt-6 pb-0 md:sticky md:left-0 md:z-10 md:w-auto md:flex-[0_0_clamp(22rem,33.333vw,42rem)] md:px-[clamp(2rem,5vw,6rem)] md:pt-[clamp(2rem,5vw,6rem)] md:pb-0"
+      data-home-panel
+      aria-label="Home"
+    >
+      <a class="w-fit text-base font-bold no-underline" href="/" aria-label="Home">allison huang</a>
+      <div class="note-prose self-center"><HomeContent /></div>
+      <nav
+        class="flex gap-4 pb-6 text-sm md:pb-[clamp(2rem,5vw,6rem)] [&_a:hover]:underline [&_a]:no-underline"
+        aria-label="External links"
+      >
+        <a href="https://x.com/allisoncyhuang/" target="_blank" rel="noreferrer">X</a>
+        <p>allisoncyhuang at gmail dot com</p>
+      </nav>
+    </section>
+    <div class="flex min-w-0" data-open-panels aria-live="polite"></div>
+    <div data-note-repository hidden>
+      {renderedNotes.map(({ note, Content }) => (
+        <NotePanel slug={note.id} title={note.data.title}><Content /></NotePanel>
+      ))}
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  const viewport = document.querySelector<HTMLElement>('[data-panel-viewport]')
+  const homePanel = document.querySelector<HTMLElement>('[data-home-panel]')
+  const openPanels = document.querySelector<HTMLElement>('[data-open-panels]')
+  const repository = document.querySelector<HTMLElement>('[data-note-repository]')
+  if (!viewport || !homePanel || !openPanels || !repository) {
+    throw new Error('Panel layout failed to initialize')
+  }
+
+  const notes = new Map(
+    Array.from(repository.querySelectorAll<HTMLElement>('[data-note]'))
+      .map((note) => [note.dataset.note!, note]),
+  )
+  const hoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
+  let previewLink: HTMLAnchorElement | null = null
+  let previewCloseTimer: number | undefined
+
+  const noteLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('a[href]'))
+    .filter((link) => {
+      const url = new URL(link.href, window.location.href)
+      const match = url.pathname.match(/^\/notes\/([^/]+)\/?$/)
+      return url.origin === window.location.origin
+        && !!match
+        && notes.has(decodeURIComponent(match[1]))
+    })
+
+  for (const link of noteLinks) link.dataset.noteLink = ''
+
+  const readPath = () => {
+    const value = new URL(window.location.href).searchParams.get('path')
+    if (!value) return []
+    const seen = new Set<string>()
+    return value.split(',').map(decodeURIComponent).filter((slug) => {
+      if (!notes.has(slug) || seen.has(slug)) return false
+      seen.add(slug)
+      return true
+    })
+  }
+
+  const writePath = (path: string[]) => {
+    const url = new URL(window.location.href)
+    if (path.length) url.searchParams.set('path', path.join(','))
+    else url.searchParams.delete('path')
+    history.pushState({ path }, '', url)
+  }
+
+  const showPath = (
+    path: string[],
+    behavior: ScrollBehavior = 'smooth',
+    enteringSlug?: string,
+  ) => {
+    window.clearTimeout(previewCloseTimer)
+    const hadOpenPanels = openPanels.childElementCount > 0
+    const scrollTop = hadOpenPanels ? homePanel.scrollTop : viewport.scrollTop
+    for (const panel of openPanels.querySelectorAll<HTMLElement>('[data-note]')) {
+      panel.removeAttribute('data-mounted')
+      panel.removeAttribute('data-preview')
+      panel.removeAttribute('data-entering')
+      panel.removeAttribute('data-exiting')
+      repository.append(panel)
+    }
+    for (const slug of path) {
+      const panel = notes.get(slug)
+      if (!panel) continue
+      panel.dataset.mounted = 'true'
+      if (slug === enteringSlug) panel.dataset.entering = ''
+      openPanels.append(panel)
+    }
+    for (const link of noteLinks) {
+      const url = new URL(link.href, window.location.href)
+      const slug = decodeURIComponent(url.pathname.match(/^\/notes\/([^/]+)\/?$/)![1])
+      const sourceSlug = link.closest<HTMLElement>('[data-note]')?.dataset.note
+      const sourceIndex = sourceSlug ? path.indexOf(sourceSlug) : -1
+      const isOpen = path[sourceIndex + 1] === slug
+      link.setAttribute('aria-expanded', String(isOpen))
+    }
+    const hasOpenPanels = openPanels.childElementCount > 0
+    if (hadOpenPanels !== hasOpenPanels) {
+      if (hasOpenPanels) {
+        homePanel.scrollTop = scrollTop
+        viewport.scrollTop = 0
+      } else {
+        viewport.scrollTop = scrollTop
+        homePanel.scrollTop = 0
+      }
+    }
+    if (enteringSlug) requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        notes.get(enteringSlug)?.removeAttribute('data-entering')
+      })
+    })
+    requestAnimationFrame(() => viewport.scrollTo({
+      left: path.length ? viewport.scrollWidth : 0,
+      behavior,
+    }))
+  }
+
+  const navigateTo = (slug: string, sourcePanel?: HTMLElement | null) => {
+    const current = readPath()
+    const sourceSlug = sourcePanel?.dataset.note
+    const sourceIndex = sourceSlug ? current.indexOf(sourceSlug) : -1
+    const base = sourceIndex >= 0 ? current.slice(0, sourceIndex + 1) : []
+    const controlledIndex = sourceIndex + 1
+    const isOpen = current[controlledIndex] === slug
+    const next = isOpen ? base : [...base, slug]
+    const previewPanel = notes.get(slug)
+    writePath(next)
+    if (!isOpen && previewPanel?.hasAttribute('data-preview')) {
+      previewPanel.removeAttribute('data-preview')
+      return
+    }
+    showPath(next, 'smooth', isOpen ? undefined : slug)
+  }
+
+  const getNoteLink = (target: EventTarget | null) => {
+    if (!(target instanceof Element)) return null
+    const link = target.closest<HTMLAnchorElement>('a[href]')
+    if (!link) return null
+    const url = new URL(link.href, window.location.href)
+    const match = url.pathname.match(/^\/notes\/([^/]+)\/?$/)
+    if (!match || url.origin !== window.location.origin) return null
+    const slug = decodeURIComponent(match[1])
+    return notes.has(slug) ? { link, slug } : null
+  }
+
+  const previewNote = (link: HTMLAnchorElement, slug: string) => {
+    if (!hoverQuery.matches || previewLink === link) return
+    previewLink = link
+    const current = readPath()
+    const sourceSlug = link.closest<HTMLElement>('[data-note]')?.dataset.note
+    const sourceIndex = sourceSlug ? current.indexOf(sourceSlug) : -1
+    const controlledIndex = sourceIndex + 1
+    if (current[controlledIndex] === slug) return
+    const path = [...current.slice(0, controlledIndex), slug]
+    showPath(path, 'smooth', slug)
+    notes.get(slug)?.setAttribute('data-preview', '')
+  }
+
+  const endPreview = (link: HTMLAnchorElement) => {
+    if (previewLink !== link) return
+    previewLink = null
+    const panel = openPanels.querySelector<HTMLElement>('[data-preview]')
+    if (!panel) return
+    panel.dataset.exiting = ''
+    previewCloseTimer = window.setTimeout(() => showPath(readPath()), 160)
+  }
+
+  document.addEventListener('pointerover', (event) => {
+    const noteLink = getNoteLink(event.target)
+    if (noteLink) previewNote(noteLink.link, noteLink.slug)
+  })
+
+  document.addEventListener('pointerout', (event) => {
+    const noteLink = getNoteLink(event.target)
+    if (!noteLink || noteLink.link.contains(event.relatedTarget as Node | null)) return
+    endPreview(noteLink.link)
+  })
+
+  document.addEventListener('click', (event) => {
+    const target = event.target as Element
+    if (target.closest('[data-panel-back]')) {
+      const next = readPath().slice(0, -1)
+      writePath(next)
+      showPath(next)
+      return
+    }
+    const noteLink = getNoteLink(target)
+    if (!noteLink || noteLink.link.target === '_blank' || event.defaultPrevented) return
+    event.preventDefault()
+    previewLink = null
+    navigateTo(noteLink.slug, noteLink.link.closest<HTMLElement>('[data-note]'))
+  })
+
+  window.addEventListener('popstate', () => showPath(readPath()))
+  window.addEventListener('resize', () => showPath(readPath(), 'auto'))
+  showPath(readPath(), 'auto')
+</script>

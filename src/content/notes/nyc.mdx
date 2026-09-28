@@ -1,0 +1,17 @@
+---
+title: nyc
+description: A New York City street scene
+---
+
+import { Image } from 'astro:assets'
+import nyc from '/src/assets/images/nyc.jpeg'
+
+<Image
+  src={nyc}
+  alt="A person checking a phone beside orange construction barriers at night"
+  widths={[640, 960, 1344]}
+  sizes="(max-width: 767px) 100vw, min(42rem, 33.333vw)"
+  format="webp"
+/>
+
+still working on it

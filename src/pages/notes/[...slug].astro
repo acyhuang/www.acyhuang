@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes', ({ data }) => data.published)
+  return notes.map((note) => ({
+    params: { slug: note.id },
+    props: { title: note.data.title },
+  }))
+}
+
+const { slug } = Astro.params
+const { title } = Astro.props
+const destination = `/?path=${encodeURIComponent(slug ?? '')}`
+---
+
+<BaseLayout title={`${title} — allison huang`}>
+  <main class="redirect-page"><p>Opening <a href={destination}>{title}</a>…</p></main>
+  <script define:vars={{ destination }}>window.location.replace(destination)</script>
+</BaseLayout>
+
+<style>
+  .redirect-page { display: grid; min-height: 100dvh; place-items: center; padding: 2rem; }
+</style>

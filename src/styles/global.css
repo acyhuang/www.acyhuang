@@ -1,0 +1,116 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@layer base {
+  :root {
+    font-family: Helvetica Neue, sans-serif;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  html, body {
+    min-height: 100%;
+  }
+
+  body {
+    color: black;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  a {
+    color: black;
+    text-decoration-color: #8a8a8a;
+    text-underline-offset: 0.16em;
+  }
+
+  a[data-link-kind="external"]::after {
+    content: "\2197";
+    display: inline-block;
+    margin-inline-start: 0.22em;
+    font-size: 1em;
+    line-height: 1;
+    text-decoration: none;
+    vertical-align: baseline;
+  }
+}
+
+.note-prose a {
+  color: inherit;
+  font-weight: inherit;
+}
+
+a[data-note-link] {
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  transition:
+    color 100ms ease,
+    background-color 100ms ease;
+}
+
+a[data-note-link]:focus-visible,
+a[data-note-link][aria-expanded="true"] {
+  color: inherit;
+  background-color: #e5e5e5;
+  text-decoration-color: currentColor;
+  outline: none;
+}
+
+a[data-note-link]:focus-visible {
+  box-shadow: 0 0 0 2px white, 0 0 0 4px black;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  a[data-note-link]:hover {
+    color: inherit;
+    background-color: #e5e5e5;
+    text-decoration-color: currentColor;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a[data-note-link] {
+    transition-duration: 0ms;
+  }
+}
+
+.note-prose {
+  @apply prose prose-neutral max-w-none;
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+
+.note-prose > :first-child { margin-top: 0; }
+.note-prose > :last-child { margin-bottom: 0; }
+
+[data-panel-viewport]:not(:has([data-open-panels] > [data-note])) [data-home-panel] {
+  overflow-y: visible;
+}
+
+[data-panel-viewport]:has([data-open-panels] > [data-note]) {
+  scrollbar-width: none;
+}
+
+[data-panel-viewport]:has([data-open-panels] > [data-note])::-webkit-scrollbar {
+  display: none;
+}
+
+.note-panel {
+  opacity: 1;
+  transition: opacity 200ms ease;
+}
+
+.note-panel[data-preview]:not([data-entering]):not([data-exiting]) {
+  opacity: 0.75;
+}
+
+.note-panel[data-entering],
+.note-panel[data-exiting] {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note-panel {
+    transition-duration: 100ms;
+  }
+}

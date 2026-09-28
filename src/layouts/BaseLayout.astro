@@ -1,0 +1,39 @@
+---
+import '../styles/global.css'
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const {
+  title = 'Allison Huang',
+  description = 'Notes by Allison Huang',
+} = Astro.props
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg?v=3" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+    <script>
+      for (const link of document.querySelectorAll<HTMLAnchorElement>('a[href]')) {
+        const url = new URL(link.href, window.location.href)
+        const isExternal = /^https?:$/.test(url.protocol) && url.origin !== window.location.origin
+
+        link.dataset.linkKind = isExternal ? 'external' : 'internal'
+        if (isExternal) {
+          link.target = '_blank'
+          link.rel = 'noopener noreferrer'
+        }
+      }
+    </script>
+  </body>
+</html>
