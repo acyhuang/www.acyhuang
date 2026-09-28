@@ -35,9 +35,9 @@
   a[data-link-kind="external"]::after {
     content: "\2197\FE0E";
     display: inline-block;
-    margin-inline-start: 0.22em;
+    margin-inline-start: 0.14em;
     font-family: Arial, "Helvetica Neue", sans-serif;
-    font-size: 1em;
+    font-size: 0.85em;
     line-height: 1;
     text-decoration: none;
     vertical-align: baseline;
@@ -45,7 +45,6 @@
 }
 
 .note-prose a {
-  color: inherit;
   font-weight: inherit;
 }
 
@@ -101,7 +100,6 @@ a[data-note-link][aria-expanded="true"] {
   --tw-prose-body: var(--prose-text);
   --tw-prose-headings: var(--prose-text);
   --tw-prose-lead: var(--prose-text);
-  --tw-prose-links: var(--prose-text);
   --tw-prose-bold: var(--prose-text);
   font-size: 1.05rem;
   line-height: 1.4;
