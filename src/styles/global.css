@@ -33,9 +33,10 @@
   }
 
   a[data-link-kind="external"]::after {
-    content: "\2197";
+    content: "\2197\FE0E";
     display: inline-block;
     margin-inline-start: 0.22em;
+    font-family: Arial, "Helvetica Neue", sans-serif;
     font-size: 1em;
     line-height: 1;
     text-decoration: none;
