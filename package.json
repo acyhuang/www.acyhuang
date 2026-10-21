@@ -16,6 +16,7 @@
     "@astrojs/mdx": "latest",
     "@tailwindcss/typography": "latest",
     "@tailwindcss/vite": "latest",
+    "@vercel/analytics": "^2.0.1",
     "astro": "latest",
     "tailwindcss": "latest"
   },
