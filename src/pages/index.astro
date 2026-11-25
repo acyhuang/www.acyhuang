@@ -31,7 +31,7 @@ const renderedNotes = await Promise.all(
         <p>allisoncyhuang at gmail dot com</p>
       </nav>
     </section>
-    <div class="flex min-w-0" data-open-panels aria-live="polite"></div>
+    <div class="flex min-w-0 md:flex-1" data-open-panels aria-live="polite"></div>
     <div data-note-repository hidden>
       {renderedNotes.map(({ note, Content }) => (
         <NotePanel slug={note.id} title={note.data.title}><Content /></NotePanel>
@@ -71,12 +71,10 @@ const renderedNotes = await Promise.all(
   const readPath = () => {
     const value = new URL(window.location.href).searchParams.get('path')
     if (!value) return []
-    const seen = new Set<string>()
-    return value.split(',').map(decodeURIComponent).filter((slug) => {
-      if (!notes.has(slug) || seen.has(slug)) return false
-      seen.add(slug)
-      return true
-    })
+    // Only one note can be open; older chained URLs resolve to their last note.
+    return value.split(',').map(decodeURIComponent)
+      .filter((slug) => notes.has(slug))
+      .slice(-1)
   }
 
   const writePath = (path: string[]) => {
@@ -111,10 +109,8 @@ const renderedNotes = await Promise.all(
     for (const link of noteLinks) {
       const url = new URL(link.href, window.location.href)
       const slug = decodeURIComponent(url.pathname.match(/^\/notes\/([^/]+)\/?$/)![1])
-      const sourceSlug = link.closest<HTMLElement>('[data-note]')?.dataset.note
-      const sourceIndex = sourceSlug ? path.indexOf(sourceSlug) : -1
-      const isOpen = path[sourceIndex + 1] === slug
-      link.setAttribute('aria-expanded', String(isOpen))
+      // Only home links toggle the note panel; links inside a note replace it.
+      if (homePanel.contains(link)) link.setAttribute('aria-expanded', String(path[0] === slug))
     }
     const hasOpenPanels = openPanels.childElementCount > 0
     if (hadOpenPanels !== hasOpenPanels) {
@@ -137,14 +133,10 @@ const renderedNotes = await Promise.all(
     }))
   }
 
-  const navigateTo = (slug: string, sourcePanel?: HTMLElement | null) => {
-    const current = readPath()
-    const sourceSlug = sourcePanel?.dataset.note
-    const sourceIndex = sourceSlug ? current.indexOf(sourceSlug) : -1
-    const base = sourceIndex >= 0 ? current.slice(0, sourceIndex + 1) : []
-    const controlledIndex = sourceIndex + 1
-    const isOpen = current[controlledIndex] === slug
-    const next = isOpen ? base : [...base, slug]
+  const navigateTo = (slug: string, fromHome: boolean) => {
+    const isOpen = readPath()[0] === slug
+    if (isOpen && !fromHome) return
+    const next = isOpen ? [] : [slug]
     const previewPanel = notes.get(slug)
     writePath(next)
     if (!isOpen && previewPanel?.hasAttribute('data-preview')) {
@@ -166,15 +158,11 @@ const renderedNotes = await Promise.all(
   }
 
   const previewNote = (link: HTMLAnchorElement, slug: string) => {
-    if (!hoverQuery.matches || previewLink === link) return
+    // Previewing from inside a note would replace the link being hovered.
+    if (!hoverQuery.matches || previewLink === link || !homePanel.contains(link)) return
     previewLink = link
-    const current = readPath()
-    const sourceSlug = link.closest<HTMLElement>('[data-note]')?.dataset.note
-    const sourceIndex = sourceSlug ? current.indexOf(sourceSlug) : -1
-    const controlledIndex = sourceIndex + 1
-    if (current[controlledIndex] === slug) return
-    const path = [...current.slice(0, controlledIndex), slug]
-    showPath(path, 'smooth', slug)
+    if (readPath()[0] === slug) return
+    showPath([slug], 'smooth', slug)
     notes.get(slug)?.setAttribute('data-preview', '')
   }
 
@@ -201,16 +189,15 @@ const renderedNotes = await Promise.all(
   document.addEventListener('click', (event) => {
     const target = event.target as Element
     if (target.closest('[data-panel-back]')) {
-      const next = readPath().slice(0, -1)
-      writePath(next)
-      showPath(next)
+      writePath([])
+      showPath([])
       return
     }
     const noteLink = getNoteLink(target)
     if (!noteLink || noteLink.link.target === '_blank' || event.defaultPrevented) return
     event.preventDefault()
     previewLink = null
-    navigateTo(noteLink.slug, noteLink.link.closest<HTMLElement>('[data-note]'))
+    navigateTo(noteLink.slug, homePanel.contains(noteLink.link))
   })
 
   window.addEventListener('popstate', () => showPath(readPath()))
