@@ -31,7 +31,7 @@ const renderedNotes = await Promise.all(
         <p>allisoncyhuang at gmail dot com</p>
       </nav>
     </section>
-    <div class="flex min-w-0" data-open-panels aria-live="polite"></div>
+    <div class="flex min-w-0 md:flex-1" data-open-panels aria-live="polite"></div>
     <div data-note-repository hidden>
       {renderedNotes.map(({ note, Content }) => (
         <NotePanel slug={note.id} title={note.data.title}><Content /></NotePanel>
