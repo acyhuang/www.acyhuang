@@ -25,7 +25,92 @@ const {
   </head>
   <body>
     <slot />
+    <aside
+      id="external-link-preview"
+      class:list={[
+        'group pointer-events-none fixed z-50 w-[min(18rem,calc(100vw-1.5rem))] overflow-hidden',
+        'rounded-xl border border-(--link-highlight) bg-(--page-background) text-(--page-text) shadow-md',
+        'opacity-0 data-open:opacity-100 has-data-failed:invisible',
+        'motion-safe:not-data-open:translate-y-1 motion-safe:not-data-open:scale-98',
+        'motion-safe:not-data-open:data-[placement=below]:-translate-y-1',
+        'transition-[opacity,translate,scale] duration-160 ease-strong-out',
+        'motion-reduce:transition-opacity data-instant:transition-none',
+      ]}
+      aria-hidden="true"
+      data-external-preview
+    >
+      <div class="group/media aspect-8/5 bg-(--link-highlight)" data-external-preview-media>
+        <img
+          class="block size-full object-cover opacity-0 transition-opacity duration-120 ease-strong-out group-data-instant:transition-none group-data-loaded/media:opacity-100"
+          alt=""
+          data-external-preview-image
+        />
+      </div>
+    </aside>
     <script>
+      const preview = document.querySelector<HTMLElement>('[data-external-preview]')
+      const previewMedia = preview?.querySelector<HTMLElement>('[data-external-preview-media]')
+      const previewImage = preview?.querySelector<HTMLImageElement>('[data-external-preview-image]')
+      const hoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
+      let activeExternalLink: HTMLAnchorElement | null = null
+      let previewTimer: number | undefined
+
+      // Pinch zoom only (not ⌘ +). The tolerance absorbs rounding differences.
+      const isPinchZoomed = () => (window.visualViewport?.scale ?? 1) > 1.01
+
+      const positionExternalPreview = (link: HTMLAnchorElement) => {
+        if (!preview) return
+        const linkRect = link.getBoundingClientRect()
+        // Layout size, so the closed state's scale doesn't skew the measurement.
+        const { offsetWidth: width, offsetHeight: height } = preview
+        const gap = 10
+        const edge = 12
+        const above = linkRect.top >= height + gap + edge
+        const left = Math.min(
+          window.innerWidth - width - edge,
+          Math.max(edge, linkRect.left + (linkRect.width - width) / 2),
+        )
+        const top = above
+          ? linkRect.top - height - gap
+          : linkRect.bottom + gap
+
+        preview.style.left = `${Math.round(left)}px`
+        preview.style.top = `${Math.round(top)}px`
+        preview.dataset.placement = above ? 'above' : 'below'
+        // Scale from the link, even when the card is shifted to stay on screen.
+        const originX = linkRect.left + linkRect.width / 2 - left
+        preview.style.transformOrigin = `${Math.round(originX)}px ${above ? 'bottom' : 'top'}`
+      }
+
+      const showExternalPreview = (link: HTMLAnchorElement, keyboard = false) => {
+        if (!preview || !previewImage || !previewMedia || isPinchZoomed()) return
+        const url = new URL(link.href)
+        activeExternalLink = link
+        previewMedia.removeAttribute('data-failed')
+        previewMedia.removeAttribute('data-loaded')
+        previewImage.src = `https://api.microlink.io/?url=${encodeURIComponent(url.href)}&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=750&screenshot.type=jpeg`
+        preview.toggleAttribute('data-instant', keyboard)
+        preview.dataset.open = ''
+        positionExternalPreview(link)
+      }
+
+      // Keyboard actions never animate. A card opened by keyboard also closes instantly.
+      const hideExternalPreview = (link?: HTMLAnchorElement, keyboard = false) => {
+        // Cancel first: the pointer can leave before the preview has opened.
+        window.clearTimeout(previewTimer)
+        if (link && activeExternalLink !== link) return
+        activeExternalLink = null
+        if (keyboard) preview?.setAttribute('data-instant', '')
+        preview?.removeAttribute('data-open')
+      }
+
+      previewImage?.addEventListener('error', () => {
+        previewMedia?.setAttribute('data-failed', '')
+      })
+      previewImage?.addEventListener('load', () => {
+        previewMedia?.setAttribute('data-loaded', '')
+      })
+
       for (const link of document.querySelectorAll<HTMLAnchorElement>('a[href]')) {
         const url = new URL(link.href, window.location.href)
         const isExternal = /^https?:$/.test(url.protocol) && url.origin !== window.location.origin
@@ -34,8 +119,42 @@ const {
         if (isExternal) {
           link.target = '_blank'
           link.rel = 'noopener noreferrer'
+
+          const externalLabel = document.createElement('span')
+          externalLabel.className = 'sr-only'
+          externalLabel.textContent = ' (external link)'
+          link.append(externalLabel)
+
+          // Only body text links get a site preview.
+          if (!link.closest('.note-prose')) continue
+
+          link.addEventListener('pointerenter', () => {
+            if (!hoverQuery.matches) return
+            window.clearTimeout(previewTimer)
+            previewTimer = window.setTimeout(() => showExternalPreview(link), 240)
+          })
+          link.addEventListener('pointerleave', () => hideExternalPreview(link))
+          link.addEventListener('focus', () => {
+            // Skip focus from mouse clicks, which would leave the preview stuck open.
+            if (link.matches(':focus-visible')) showExternalPreview(link, true)
+          })
+          link.addEventListener('click', (event) => hideExternalPreview(link, event.detail === 0))
+          link.addEventListener('blur', () => hideExternalPreview(link))
         }
       }
+
+      window.visualViewport?.addEventListener('resize', () => {
+        if (isPinchZoomed()) hideExternalPreview()
+      })
+      window.addEventListener('resize', () => {
+        if (activeExternalLink) positionExternalPreview(activeExternalLink)
+      })
+      window.addEventListener('scroll', () => {
+        if (activeExternalLink) positionExternalPreview(activeExternalLink)
+      }, true)
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') hideExternalPreview(undefined, true)
+      })
     </script>
   </body>
 </html>
