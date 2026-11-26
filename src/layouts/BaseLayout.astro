@@ -34,7 +34,8 @@ const {
         'motion-safe:not-data-open:translate-y-1 motion-safe:not-data-open:scale-98',
         'motion-safe:not-data-open:data-[placement=below]:-translate-y-1',
         'transition-[opacity,translate,scale] duration-160 ease-strong-out',
-        'motion-reduce:transition-opacity data-instant:transition-none',
+        // Reduced motion: opacity only, as a 200ms plain-ease fade (animate skill).
+        'motion-reduce:transition-opacity motion-reduce:duration-200 motion-reduce:ease-[ease] data-instant:transition-none',
       ]}
       aria-hidden="true"
       data-external-preview
@@ -108,7 +109,11 @@ const {
         previewMedia.removeAttribute('data-loaded')
         previewImage.src = previewSrc(link)
         positionExternalPreview(link)
-        if (reducedMotionQuery.matches) return
+        // Reduced motion swaps the slide for a fade: no movement, but the change still reads.
+        if (reducedMotionQuery.matches) {
+          preview.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: 'ease' })
+          return
+        }
         const to = preview.getBoundingClientRect()
         preview.animate([
           { transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` },
@@ -178,9 +183,9 @@ const {
         if (event.key === 'Escape') hideExternalPreview(undefined, true)
       })
 
-      // Touch screens can't hover, so double-tapping a [data-reveal-region] turns on a reveal mode:
-      // every body link gets its highlight and the site previews take turns. A tap on empty space,
-      // a scroll, or tapping a link ends it.
+      // Touch screens can't hover, so double-tapping a [data-reveal-region] plays a one-time tour:
+      // every body link gets its highlight and each site preview shows once, then it all fades out.
+      // A tap on empty space, a scroll, or tapping a link ends it early. Double-tap again to replay.
       const touchQuery = window.matchMedia('(hover: none) and (pointer: coarse)')
       const TAP_MAX_DURATION = 300
       const TAP_SLOP = 10
@@ -195,19 +200,32 @@ const {
 
       const isPreviewLink = (link: HTMLAnchorElement) => link.dataset.linkKind === 'external'
 
+      // One pass: after the last preview has had its turn, the tour ends.
       const cyclePreviews = (links: HTMLAnchorElement[], index: number) => {
-        const link = links[index % links.length]
+        const link = links[index]
         if (activeExternalLink) moveExternalPreview(link)
         else showExternalPreview(link)
-        if (links.length < 2) return
-        cycleTimer = window.setTimeout(() => cyclePreviews(links, index + 1), PREVIEW_DWELL)
+        const next = index + 1 < links.length ? () => cyclePreviews(links, index + 1) : endTour
+        cycleTimer = window.setTimeout(next, PREVIEW_DWELL)
       }
 
       const revealLinks = (region: HTMLElement) => {
+        window.clearTimeout(endingTimer)
+        document.documentElement.removeAttribute('data-tour-ending')
         revealedLinks = Array.from(region.querySelectorAll<HTMLAnchorElement>(BODY_LINKS))
         for (const link of revealedLinks) link.dataset.revealed = ''
         const previewLinks = revealedLinks.filter(isPreviewLink)
         if (previewLinks.length) cyclePreviews(previewLinks, 0)
+        else cycleTimer = window.setTimeout(endTour, PREVIEW_DWELL)
+      }
+
+      // When the tour ends on its own nobody is waiting on it, so it winds down slower than a
+      // tap-to-exit: the card fades first, then the highlights. Timings live in global.css.
+      let endingTimer: number | undefined
+      const endTour = () => {
+        document.documentElement.dataset.tourEnding = ''
+        clearReveal()
+        endingTimer = window.setTimeout(() => document.documentElement.removeAttribute('data-tour-ending'), 600)
       }
 
       const clearReveal = () => {

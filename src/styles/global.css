@@ -74,6 +74,41 @@ a[data-revealed] {
     0 0 0 4px var(--focus-ring);
 }
 
+/*
+  Hint for the double-tap reveal. Shown only where the reveal works (touch, no hover),
+  matching the script's check. Fades in once on load, then stays still.
+*/
+.reveal-hint {
+  display: none;
+  color: var(--color-neutral-500);
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .reveal-hint {
+    display: block;
+    animation: reveal-hint-in 200ms var(--ease-strong-out);
+  }
+}
+
+@keyframes reveal-hint-in {
+  from { opacity: 0; }
+}
+
+/*
+  The double-tap tour ending on its own: slower and in plain ease (the skill's "elegant" exit),
+  with the card leaving first and the highlights following. A tap to exit stays fast.
+*/
+[data-tour-ending] [data-external-preview] {
+  transition-duration: 250ms;
+  transition-timing-function: ease;
+}
+
+[data-tour-ending] :is(a[data-note-link], a[data-link-kind="external"]) {
+  transition-duration: 300ms;
+  transition-timing-function: ease;
+  transition-delay: 100ms;
+}
+
 /* Double-tap toggles the link reveal here, so the browser's double-tap zoom is off. Pinch zoom still works. */
 [data-reveal-region] {
   touch-action: manipulation;
@@ -97,19 +132,16 @@ a[data-revealed] {
   }
 }
 
-/* On touch, highlights come from the reveal mode: an enter and exit, so ease out, not a hover ease. */
+/*
+  On touch, highlights come from the reveal mode and fade in and out with the plain ease the
+  animate skill uses for color changes. A strong ease-out finishes a color fade so early it looks instant.
+*/
 @media (hover: none) {
   :is(a[data-note-link], a[data-link-kind="external"]) {
     transition-duration: 200ms;
-    transition-timing-function: var(--ease-strong-out);
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  :is(a[data-note-link], a[data-link-kind="external"]) {
-    transition-duration: 0ms;
-  }
-}
 
 .note-prose {
   @apply prose prose-neutral dark:prose-invert;

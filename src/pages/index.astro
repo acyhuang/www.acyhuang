@@ -22,7 +22,10 @@ const renderedNotes = await Promise.all(
       data-reveal-region
       aria-label="Home"
     >
-      <a class="w-fit text-base font-bold no-underline" href="/" aria-label="Home">allison huang</a>
+      <header class="flex items-baseline justify-between gap-4">
+        <a class="w-fit text-base font-bold no-underline" href="/" aria-label="Home">allison huang</a>
+        <p class="reveal-hint text-sm" aria-hidden="true">double-tap anywhere</p>
+      </header>
       <div class="note-prose self-center"><HomeContent /></div>
       <nav
         class="flex gap-4 pb-6 text-sm md:pb-[clamp(2rem,5vw,6rem)] [&_a]:no-underline"
@@ -54,7 +57,9 @@ const renderedNotes = await Promise.all(
     Array.from(repository.querySelectorAll<HTMLElement>('[data-note]'))
       .map((note) => [note.dataset.note!, note]),
   )
-  const hoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
+  // Hover previews need the two-panel layout (Tailwind's md breakpoint). In the single-panel
+  // layout the note covers the link, so the pointer leaves it and the preview open/close loops.
+  const hoverQuery = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 48rem)')
   let previewLink: HTMLAnchorElement | null = null
   let previewCloseTimer: number | undefined
 
