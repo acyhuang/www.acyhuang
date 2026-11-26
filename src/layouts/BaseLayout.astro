@@ -41,7 +41,7 @@ const {
     >
       <div class="group/media aspect-8/5 bg-(--link-highlight)" data-external-preview-media>
         <img
-          class="block size-full object-cover opacity-0 transition-opacity duration-120 ease-strong-out group-data-instant:transition-none group-data-loaded/media:opacity-100"
+          class="block size-full object-cover opacity-0 transition-opacity duration-0 ease-strong-out group-data-loaded/media:duration-120 group-data-instant:transition-none group-data-loaded/media:opacity-100"
           alt=""
           data-external-preview-image
         />
@@ -52,6 +52,9 @@ const {
       const previewMedia = preview?.querySelector<HTMLElement>('[data-external-preview-media]')
       const previewImage = preview?.querySelector<HTMLImageElement>('[data-external-preview-image]')
       const hoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
+      const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+      // Links in body text, as opposed to the site title and footer.
+      const BODY_LINKS = '.note-prose a[href]'
       let activeExternalLink: HTMLAnchorElement | null = null
       let previewTimer: number | undefined
 
@@ -82,16 +85,35 @@ const {
         preview.style.transformOrigin = `${Math.round(originX)}px ${above ? 'bottom' : 'top'}`
       }
 
+      const previewSrc = (link: HTMLAnchorElement) =>
+        `https://api.microlink.io/?url=${encodeURIComponent(new URL(link.href).href)}&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=750&screenshot.type=jpeg`
+
       const showExternalPreview = (link: HTMLAnchorElement, keyboard = false) => {
         if (!preview || !previewImage || !previewMedia || isPinchZoomed()) return
-        const url = new URL(link.href)
         activeExternalLink = link
         previewMedia.removeAttribute('data-failed')
         previewMedia.removeAttribute('data-loaded')
-        previewImage.src = `https://api.microlink.io/?url=${encodeURIComponent(url.href)}&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=750&screenshot.type=jpeg`
+        previewImage.src = previewSrc(link)
         preview.toggleAttribute('data-instant', keyboard)
         preview.dataset.open = ''
         positionExternalPreview(link)
+      }
+
+      // Slide an open card to another link instead of closing and reopening it.
+      const moveExternalPreview = (link: HTMLAnchorElement) => {
+        if (!preview || !previewImage || !previewMedia) return
+        const from = preview.getBoundingClientRect()
+        activeExternalLink = link
+        previewMedia.removeAttribute('data-failed')
+        previewMedia.removeAttribute('data-loaded')
+        previewImage.src = previewSrc(link)
+        positionExternalPreview(link)
+        if (reducedMotionQuery.matches) return
+        const to = preview.getBoundingClientRect()
+        preview.animate([
+          { transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` },
+          { transform: 'none' },
+        ], { duration: 280, easing: 'cubic-bezier(0.77, 0, 0.175, 1)' })
       }
 
       // Keyboard actions never animate. A card opened by keyboard also closes instantly.
@@ -126,7 +148,7 @@ const {
           link.append(externalLabel)
 
           // Only body text links get a site preview.
-          if (!link.closest('.note-prose')) continue
+          if (!link.matches(BODY_LINKS)) continue
 
           link.addEventListener('pointerenter', () => {
             if (!hoverQuery.matches) return
@@ -155,6 +177,101 @@ const {
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') hideExternalPreview(undefined, true)
       })
+
+      // Touch screens can't hover, so double-tapping a [data-reveal-region] turns on a reveal mode:
+      // every body link gets its highlight and the site previews take turns. A tap on empty space,
+      // a scroll, or tapping a link ends it.
+      const touchQuery = window.matchMedia('(hover: none) and (pointer: coarse)')
+      const TAP_MAX_DURATION = 300
+      const TAP_SLOP = 10
+      const DOUBLE_TAP_GAP = 300
+      const DOUBLE_TAP_SLOP = 40
+      const PREVIEW_DWELL = 1600
+      let press: { id: number, x: number, y: number, time: number, region: HTMLElement } | null = null
+      let lastTap: { x: number, y: number, time: number } | null = null
+      let cycleTimer: number | undefined
+      let revealedLinks: HTMLAnchorElement[] = []
+      const preloaded = new Set<string>()
+
+      const isPreviewLink = (link: HTMLAnchorElement) => link.dataset.linkKind === 'external'
+
+      const cyclePreviews = (links: HTMLAnchorElement[], index: number) => {
+        const link = links[index % links.length]
+        if (activeExternalLink) moveExternalPreview(link)
+        else showExternalPreview(link)
+        if (links.length < 2) return
+        cycleTimer = window.setTimeout(() => cyclePreviews(links, index + 1), PREVIEW_DWELL)
+      }
+
+      const revealLinks = (region: HTMLElement) => {
+        revealedLinks = Array.from(region.querySelectorAll<HTMLAnchorElement>(BODY_LINKS))
+        for (const link of revealedLinks) link.dataset.revealed = ''
+        const previewLinks = revealedLinks.filter(isPreviewLink)
+        if (previewLinks.length) cyclePreviews(previewLinks, 0)
+      }
+
+      const clearReveal = () => {
+        if (!revealedLinks.length) return
+        window.clearTimeout(cycleTimer)
+        hideExternalPreview()
+        for (const link of revealedLinks) link.removeAttribute('data-revealed')
+        revealedLinks = []
+      }
+
+      // Start fetching screenshots on the first tap so the first card isn't an empty box.
+      const preloadPreviews = (region: HTMLElement) => {
+        for (const link of region.querySelectorAll<HTMLAnchorElement>(BODY_LINKS)) {
+          if (!isPreviewLink(link)) continue
+          const src = previewSrc(link)
+          if (preloaded.has(src)) continue
+          preloaded.add(src)
+          new Image().src = src
+        }
+      }
+
+      document.addEventListener('pointerdown', (event) => {
+        if (event.pointerType !== 'touch' || !touchQuery.matches) return
+        const target = event.target instanceof Element ? event.target : null
+        const region = target?.closest<HTMLElement>('[data-reveal-region]')
+        // Tapping a link, or anywhere outside the region, ends the mode and isn't a double-tap.
+        if (!region || target?.closest('a, button')) {
+          press = null
+          lastTap = null
+          clearReveal()
+          return
+        }
+        press = { id: event.pointerId, x: event.clientX, y: event.clientY, time: event.timeStamp, region }
+        preloadPreviews(region)
+      }, true)
+
+      document.addEventListener('pointerup', (event) => {
+        if (!press || event.pointerId !== press.id) return
+        const { x, y, time, region } = press
+        press = null
+        const isTap = event.timeStamp - time < TAP_MAX_DURATION
+          && Math.hypot(event.clientX - x, event.clientY - y) < TAP_SLOP
+        if (!isTap) return
+        const isDoubleTap = lastTap
+          && time - lastTap.time < DOUBLE_TAP_GAP
+          && Math.hypot(x - lastTap.x, y - lastTap.y) < DOUBLE_TAP_SLOP
+        if (isDoubleTap) {
+          lastTap = null
+          revealLinks(region)
+          return
+        }
+        // A single tap leaves the mode right away, so the second tap of a double-tap is a no-op.
+        if (revealedLinks.length) {
+          lastTap = null
+          clearReveal()
+          return
+        }
+        lastTap = { x, y, time }
+      }, true)
+
+      document.addEventListener('pointercancel', () => {
+        press = null
+      }, true)
+      window.addEventListener('scroll', clearReveal, true)
     </script>
   </body>
 </html>

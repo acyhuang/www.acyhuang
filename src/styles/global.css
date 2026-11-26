@@ -60,7 +60,8 @@
 }
 
 :is(a[data-note-link], a[data-link-kind="external"]):focus-visible,
-a[data-note-link][aria-expanded="true"] {
+a[data-note-link][aria-expanded="true"],
+a[data-revealed] {
   color: inherit;
   background-color: var(--link-highlight);
   text-decoration-color: currentColor;
@@ -71,6 +72,11 @@ a[data-note-link][aria-expanded="true"] {
   box-shadow:
     0 0 0 2px var(--page-background),
     0 0 0 4px var(--focus-ring);
+}
+
+/* Double-tap toggles the link reveal here, so the browser's double-tap zoom is off. Pinch zoom still works. */
+[data-reveal-region] {
+  touch-action: manipulation;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -88,6 +94,14 @@ a[data-note-link][aria-expanded="true"] {
     color: inherit;
     background-color: var(--link-highlight);
     text-decoration-color: currentColor;
+  }
+}
+
+/* On touch, highlights come from the reveal mode: an enter and exit, so ease out, not a hover ease. */
+@media (hover: none) {
+  :is(a[data-note-link], a[data-link-kind="external"]) {
+    transition-duration: 200ms;
+    transition-timing-function: var(--ease-strong-out);
   }
 }
 
