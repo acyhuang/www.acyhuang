@@ -36,13 +36,15 @@ const {
         'transition-[opacity,translate,scale] duration-160 ease-strong-out',
         // Reduced motion: opacity only, as a 200ms plain-ease fade (animate skill).
         'motion-reduce:transition-opacity motion-reduce:duration-200 motion-reduce:ease-[ease] data-instant:transition-none',
+        'data-toast:not-data-quick:duration-400 data-toast:not-data-quick:ease-[ease]',
+        'motion-reduce:data-toast:not-data-quick:duration-400',
       ]}
       aria-hidden="true"
       data-external-preview
     >
       <div class="group/media aspect-8/5 bg-(--link-highlight)" data-external-preview-media>
         <img
-          class="block size-full object-cover opacity-0 transition-opacity duration-0 ease-strong-out group-data-loaded/media:duration-120 group-data-instant:transition-none group-data-loaded/media:opacity-100"
+          class="block size-full object-cover opacity-0 transition-opacity duration-0 ease-[ease] group-data-loaded/media:duration-200 group-data-instant:transition-none group-data-loaded/media:opacity-100"
           alt=""
           data-external-preview-image
         />
@@ -50,75 +52,79 @@ const {
     </aside>
     <script>
       const preview = document.querySelector<HTMLElement>('[data-external-preview]')
-      const previewMedia = preview?.querySelector<HTMLElement>('[data-external-preview-media]')
-      const previewImage = preview?.querySelector<HTMLImageElement>('[data-external-preview-image]')
       const hoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
-      const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
       // Links in body text, as opposed to the site title and footer.
       const BODY_LINKS = '.note-prose a[href]'
       let activeExternalLink: HTMLAnchorElement | null = null
       let previewTimer: number | undefined
 
+      type Box = { top: number, bottom: number, left: number, right: number }
+
       // Pinch zoom only (not ⌘ +). The tolerance absorbs rounding differences.
       const isPinchZoomed = () => (window.visualViewport?.scale ?? 1) > 1.01
 
-      const positionExternalPreview = (link: HTMLAnchorElement) => {
-        if (!preview) return
+      const placeCard = (card: HTMLElement, link: HTMLAnchorElement, avoid: Box[] = []): Box => {
         const linkRect = link.getBoundingClientRect()
         // Layout size, so the closed state's scale doesn't skew the measurement.
-        const { offsetWidth: width, offsetHeight: height } = preview
+        const { offsetWidth: width, offsetHeight: height } = card
         const gap = 10
         const edge = 12
-        const above = linkRect.top >= height + gap + edge
         const left = Math.min(
           window.innerWidth - width - edge,
           Math.max(edge, linkRect.left + (linkRect.width - width) / 2),
         )
-        const top = above
-          ? linkRect.top - height - gap
-          : linkRect.bottom + gap
+        const aboveTop = linkRect.top - height - gap
+        const overlaps = (top: number) => avoid.some((box) =>
+          top < box.bottom && top + height > box.top && left < box.right && left + width > box.left)
+        const above = aboveTop >= edge && !overlaps(aboveTop)
+        const top = above ? aboveTop : linkRect.bottom + gap
 
-        preview.style.left = `${Math.round(left)}px`
-        preview.style.top = `${Math.round(top)}px`
-        preview.dataset.placement = above ? 'above' : 'below'
+        card.style.left = `${Math.round(left)}px`
+        card.style.top = `${Math.round(top)}px`
+        card.dataset.placement = above ? 'above' : 'below'
         // Scale from the link, even when the card is shifted to stay on screen.
         const originX = linkRect.left + linkRect.width / 2 - left
-        preview.style.transformOrigin = `${Math.round(originX)}px ${above ? 'bottom' : 'top'}`
+        card.style.transformOrigin = `${Math.round(originX)}px ${above ? 'bottom' : 'top'}`
+        return { top, bottom: top + height, left, right: left + width }
+      }
+
+      const applyStylesNow = (element: HTMLElement) => element.getBoundingClientRect()
+
+      const openCard = (card: HTMLElement, link: HTMLAnchorElement, avoid: Box[] = [], instant = false) => {
+        card.setAttribute('data-instant', '')
+        const box = placeCard(card, link, avoid)
+        applyStylesNow(card)
+        card.toggleAttribute('data-instant', instant)
+        card.dataset.open = ''
+        return box
       }
 
       const previewSrc = (link: HTMLAnchorElement) =>
         `https://api.microlink.io/?url=${encodeURIComponent(new URL(link.href).href)}&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=750&screenshot.type=jpeg`
 
-      const showExternalPreview = (link: HTMLAnchorElement, keyboard = false) => {
-        if (!preview || !previewImage || !previewMedia || isPinchZoomed()) return
-        activeExternalLink = link
-        previewMedia.removeAttribute('data-failed')
-        previewMedia.removeAttribute('data-loaded')
-        previewImage.src = previewSrc(link)
-        preview.toggleAttribute('data-instant', keyboard)
-        preview.dataset.open = ''
-        positionExternalPreview(link)
+      const wireCardImage = (card: HTMLElement) => {
+        const media = card.querySelector<HTMLElement>('[data-external-preview-media]')
+        const image = card.querySelector<HTMLImageElement>('[data-external-preview-image]')
+        image?.addEventListener('error', () => media?.setAttribute('data-failed', ''))
+        image?.addEventListener('load', () => media?.setAttribute('data-loaded', ''))
       }
 
-      // Slide an open card to another link instead of closing and reopening it.
-      const moveExternalPreview = (link: HTMLAnchorElement) => {
-        if (!preview || !previewImage || !previewMedia) return
-        const from = preview.getBoundingClientRect()
+      const setCardImage = (card: HTMLElement, link: HTMLAnchorElement) => {
+        const media = card.querySelector<HTMLElement>('[data-external-preview-media]')
+        const image = card.querySelector<HTMLImageElement>('[data-external-preview-image]')
+        if (!media || !image) return
+        image.src = previewSrc(link)
+        media.removeAttribute('data-failed')
+        media.toggleAttribute('data-loaded', image.complete && image.naturalWidth > 0)
+      }
+
+      if (preview) wireCardImage(preview)
+
+      const showExternalPreview = (link: HTMLAnchorElement, keyboard = false) => {
+        if (!preview || isPinchZoomed()) return
         activeExternalLink = link
-        previewMedia.removeAttribute('data-failed')
-        previewMedia.removeAttribute('data-loaded')
-        previewImage.src = previewSrc(link)
-        positionExternalPreview(link)
-        // Reduced motion swaps the slide for a fade: no movement, but the change still reads.
-        if (reducedMotionQuery.matches) {
-          preview.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: 'ease' })
-          return
-        }
-        const to = preview.getBoundingClientRect()
-        preview.animate([
-          { transform: `translate(${from.left - to.left}px, ${from.top - to.top}px)` },
-          { transform: 'none' },
-        ], { duration: 280, easing: 'cubic-bezier(0.77, 0, 0.175, 1)' })
+        setCardImage(preview, link)
+        openCard(preview, link, [], keyboard)
       }
 
       // Keyboard actions never animate. A card opened by keyboard also closes instantly.
@@ -131,12 +137,24 @@ const {
         preview?.removeAttribute('data-open')
       }
 
-      previewImage?.addEventListener('error', () => {
-        previewMedia?.setAttribute('data-failed', '')
-      })
-      previewImage?.addEventListener('load', () => {
-        previewMedia?.setAttribute('data-loaded', '')
-      })
+      const keepArrowWithLastWord = (link: HTMLAnchorElement) => {
+        const lastWordWithArrow = document.createElement('span')
+        lastWordWithArrow.className = 'whitespace-nowrap'
+        lastWordWithArrow.dataset.externalArrow = ''
+        const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT)
+        let lastText: Text | null = null
+        while (walker.nextNode()) {
+          if (walker.currentNode.textContent?.trim()) lastText = walker.currentNode as Text
+        }
+        const wordStart = lastText?.data.search(/\S+\s*$/) ?? -1
+        if (!lastText || wordStart < 0) {
+          link.append(lastWordWithArrow)
+          return
+        }
+        const lastWord = lastText.splitText(wordStart)
+        lastWord.replaceWith(lastWordWithArrow)
+        lastWordWithArrow.append(lastWord)
+      }
 
       for (const link of document.querySelectorAll<HTMLAnchorElement>('a[href]')) {
         const url = new URL(link.href, window.location.href)
@@ -146,6 +164,7 @@ const {
         if (isExternal) {
           link.target = '_blank'
           link.rel = 'noopener noreferrer'
+          keepArrowWithLastWord(link)
 
           const externalLabel = document.createElement('span')
           externalLabel.className = 'sr-only'
@@ -174,66 +193,61 @@ const {
         if (isPinchZoomed()) hideExternalPreview()
       })
       window.addEventListener('resize', () => {
-        if (activeExternalLink) positionExternalPreview(activeExternalLink)
+        if (activeExternalLink && preview) placeCard(preview, activeExternalLink)
       })
       window.addEventListener('scroll', () => {
-        if (activeExternalLink) positionExternalPreview(activeExternalLink)
+        if (activeExternalLink && preview) placeCard(preview, activeExternalLink)
       }, true)
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') hideExternalPreview(undefined, true)
       })
 
-      // Touch screens can't hover, so double-tapping a [data-reveal-region] plays a one-time tour:
-      // every body link gets its highlight and each site preview shows once, then it all fades out.
-      // A tap on empty space, a scroll, or tapping a link ends it early. Double-tap again to replay.
       const touchQuery = window.matchMedia('(hover: none) and (pointer: coarse)')
       const TAP_MAX_DURATION = 300
       const TAP_SLOP = 10
       const DOUBLE_TAP_GAP = 300
       const DOUBLE_TAP_SLOP = 40
-      const PREVIEW_DWELL = 1600
+      const TOAST_DURATION = 4000
+      const TOAST_FADE = 400
+      let toastTimer: number | undefined
       let press: { id: number, x: number, y: number, time: number, region: HTMLElement } | null = null
       let lastTap: { x: number, y: number, time: number } | null = null
-      let cycleTimer: number | undefined
-      let revealedLinks: HTMLAnchorElement[] = []
+      let toasts: { card: HTMLElement, link: HTMLAnchorElement }[] = []
       const preloaded = new Set<string>()
 
       const isPreviewLink = (link: HTMLAnchorElement) => link.dataset.linkKind === 'external'
 
-      // One pass: after the last preview has had its turn, the tour ends.
-      const cyclePreviews = (links: HTMLAnchorElement[], index: number) => {
-        const link = links[index]
-        if (activeExternalLink) moveExternalPreview(link)
-        else showExternalPreview(link)
-        const next = index + 1 < links.length ? () => cyclePreviews(links, index + 1) : endTour
-        cycleTimer = window.setTimeout(next, PREVIEW_DWELL)
+      const showAllPreviews = (region: HTMLElement) => {
+        if (!preview) return
+        const links = Array.from(region.querySelectorAll<HTMLAnchorElement>(BODY_LINKS)).filter(isPreviewLink)
+        const placed: Box[] = []
+        toasts = links.map((link) => {
+          const card = preview.cloneNode(true) as HTMLElement
+          for (const name of ['id', 'data-external-preview', 'data-open', 'data-instant']) card.removeAttribute(name)
+          card.dataset.toast = ''
+          document.body.append(card)
+          wireCardImage(card)
+          setCardImage(card, link)
+          placed.push(openCard(card, link, placed))
+          link.setAttribute('data-previewing', '')
+          return { card, link }
+        })
+        toastTimer = window.setTimeout(() => hideAllPreviews('toast'), TOAST_DURATION)
       }
 
-      const revealLinks = (region: HTMLElement) => {
-        window.clearTimeout(endingTimer)
-        document.documentElement.removeAttribute('data-tour-ending')
-        revealedLinks = Array.from(region.querySelectorAll<HTMLAnchorElement>(BODY_LINKS))
-        for (const link of revealedLinks) link.dataset.revealed = ''
-        const previewLinks = revealedLinks.filter(isPreviewLink)
-        if (previewLinks.length) cyclePreviews(previewLinks, 0)
-        else cycleTimer = window.setTimeout(endTour, PREVIEW_DWELL)
-      }
-
-      // When the tour ends on its own nobody is waiting on it, so it winds down slower than a
-      // tap-to-exit: the card fades first, then the highlights. Timings live in global.css.
-      let endingTimer: number | undefined
-      const endTour = () => {
-        document.documentElement.dataset.tourEnding = ''
-        clearReveal()
-        endingTimer = window.setTimeout(() => document.documentElement.removeAttribute('data-tour-ending'), 600)
-      }
-
-      const clearReveal = () => {
-        if (!revealedLinks.length) return
-        window.clearTimeout(cycleTimer)
-        hideExternalPreview()
-        for (const link of revealedLinks) link.removeAttribute('data-revealed')
-        revealedLinks = []
+      const hideAllPreviews = (pace: 'quick' | 'toast' = 'quick') => {
+        window.clearTimeout(toastTimer)
+        for (const { card, link } of toasts) {
+          card.toggleAttribute('data-quick', pace === 'quick')
+          card.removeAttribute('data-open')
+          link.removeAttribute('data-previewing')
+          if (pace === 'toast') {
+            link.setAttribute('data-fading', '')
+            window.setTimeout(() => link.removeAttribute('data-fading'), TOAST_FADE)
+          }
+          window.setTimeout(() => card.remove(), TOAST_FADE)
+        }
+        toasts = []
       }
 
       // Start fetching screenshots on the first tap so the first card isn't an empty box.
@@ -255,7 +269,7 @@ const {
         if (!region || target?.closest('a, button')) {
           press = null
           lastTap = null
-          clearReveal()
+          hideAllPreviews()
           return
         }
         press = { id: event.pointerId, x: event.clientX, y: event.clientY, time: event.timeStamp, region }
@@ -274,13 +288,13 @@ const {
           && Math.hypot(x - lastTap.x, y - lastTap.y) < DOUBLE_TAP_SLOP
         if (isDoubleTap) {
           lastTap = null
-          revealLinks(region)
+          showAllPreviews(region)
           return
         }
         // A single tap leaves the mode right away, so the second tap of a double-tap is a no-op.
-        if (revealedLinks.length) {
+        if (toasts.length) {
           lastTap = null
-          clearReveal()
+          hideAllPreviews()
           return
         }
         lastTap = { x, y, time }
@@ -289,7 +303,7 @@ const {
       document.addEventListener('pointercancel', () => {
         press = null
       }, true)
-      window.addEventListener('scroll', clearReveal, true)
+      window.addEventListener('scroll', () => hideAllPreviews(), true)
     </script>
   </body>
 </html>

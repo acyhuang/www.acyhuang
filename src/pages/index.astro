@@ -17,14 +17,14 @@ const renderedNotes = await Promise.all(
     data-panel-viewport
   >
     <section
-      class="relative grid h-dvh min-h-0 w-screen flex-[0_0_100vw] snap-start grid-rows-[auto_minmax(min-content,1fr)_auto] gap-y-16 overflow-y-auto bg-[var(--page-background)] px-6 pt-6 pb-0 md:sticky md:left-0 md:z-10 md:w-auto md:flex-[0_0_clamp(22rem,33.333vw,42rem)] md:px-[clamp(2rem,5vw,6rem)] md:pt-[clamp(2rem,5vw,6rem)] md:pb-0"
+      class="relative grid h-dvh min-h-0 w-screen flex-[0_0_100vw] snap-start grid-rows-[auto_minmax(min-content,1fr)_auto] gap-y-16 overflow-y-auto bg-[var(--page-background)] px-6 pt-6 pb-0 md:sticky md:left-0 md:z-10 md:w-auto md:flex-[0_0_clamp(22rem,33.333vw,42rem)] md:px-[clamp(2rem,5vw,6rem)] md:pt-[clamp(2rem,5vw,6rem)] md:pb-0 touch-manipulation"
       data-home-panel
       data-reveal-region
       aria-label="Home"
     >
       <header class="flex items-baseline justify-between gap-4">
         <a class="w-fit text-base font-bold no-underline" href="/" aria-label="Home">allison huang</a>
-        <p class="reveal-hint text-sm" aria-hidden="true">double-tap anywhere</p>
+        <p class="hidden text-sm text-neutral-500 touch:block" aria-hidden="true">double-tap anywhere</p>
       </header>
       <div class="note-prose self-center"><HomeContent /></div>
       <nav

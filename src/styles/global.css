@@ -5,6 +5,8 @@
   --ease-strong-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
+@custom-variant touch (@media (hover: none) and (pointer: coarse));
+
 @layer base {
   :root {
     color-scheme: light dark;
@@ -35,7 +37,7 @@
     text-underline-offset: 0.16em;
   }
 
-  a[data-link-kind="external"]::after {
+  [data-external-arrow]::after {
     content: "\2197\FE0E";
     display: inline-block;
     margin-inline-start: 0.14em;
@@ -61,7 +63,7 @@
 
 :is(a[data-note-link], a[data-link-kind="external"]):focus-visible,
 a[data-note-link][aria-expanded="true"],
-a[data-revealed] {
+a[data-previewing] {
   color: inherit;
   background-color: var(--link-highlight);
   text-decoration-color: currentColor;
@@ -72,46 +74,6 @@ a[data-revealed] {
   box-shadow:
     0 0 0 2px var(--page-background),
     0 0 0 4px var(--focus-ring);
-}
-
-/*
-  Hint for the double-tap reveal. Shown only where the reveal works (touch, no hover),
-  matching the script's check. Fades in once on load, then stays still.
-*/
-.reveal-hint {
-  display: none;
-  color: var(--color-neutral-500);
-}
-
-@media (hover: none) and (pointer: coarse) {
-  .reveal-hint {
-    display: block;
-    animation: reveal-hint-in 200ms var(--ease-strong-out);
-  }
-}
-
-@keyframes reveal-hint-in {
-  from { opacity: 0; }
-}
-
-/*
-  The double-tap tour ending on its own: slower and in plain ease (the skill's "elegant" exit),
-  with the card leaving first and the highlights following. A tap to exit stays fast.
-*/
-[data-tour-ending] [data-external-preview] {
-  transition-duration: 250ms;
-  transition-timing-function: ease;
-}
-
-[data-tour-ending] :is(a[data-note-link], a[data-link-kind="external"]) {
-  transition-duration: 300ms;
-  transition-timing-function: ease;
-  transition-delay: 100ms;
-}
-
-/* Double-tap toggles the link reveal here, so the browser's double-tap zoom is off. Pinch zoom still works. */
-[data-reveal-region] {
-  touch-action: manipulation;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -142,9 +104,13 @@ a[data-revealed] {
   }
 }
 
+a:is([data-previewing], [data-fading]) {
+  transition-duration: 400ms;
+  transition-timing-function: ease;
+}
 
 .note-prose {
-  @apply prose prose-neutral dark:prose-invert;
+  @apply prose prose-neutral dark:prose-invert text-pretty;
   --tw-prose-body: var(--prose-text);
   --tw-prose-headings: var(--prose-text);
   --tw-prose-lead: var(--prose-text);
