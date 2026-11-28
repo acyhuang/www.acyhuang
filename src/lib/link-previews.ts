@@ -9,7 +9,8 @@ import { previewKey } from './preview-url.ts'
  *
  * The card opens for external links inside `.note-prose`. Those links are
  * written in `src/content` (home and the notes), so that directory is the
- * whole set. Each URL gets one small WebP, named by a hash of the URL.
+ * whole set. Each URL gets one small WebP. The filename hashes the URL and
+ * the screenshot viewport, so a viewport change misses the cache.
  *
  * Cache layers, newest `fetchedAt` wins:
  * - `public/link-previews/` is committed, so a cold build (and local dev)
@@ -31,6 +32,9 @@ import { previewKey } from './preview-url.ts'
  */
 
 const DEFAULT_TTL_DAYS = 7
+/** Same viewport the live card used, so pages render at a desktop breakpoint. */
+const VIEWPORT_WIDTH = 1200
+const VIEWPORT_HEIGHT = 750
 /** Card slot is `aspect-8/5` and at most 18rem (288px) wide. 800×500 covers ~2.8×. */
 const CARD_WIDTH = 800
 const CARD_HEIGHT = 500
@@ -108,7 +112,7 @@ async function refreshPreviews(root: string, logger: PreviewLogger): Promise<voi
 
   for (const url of urls) {
     const cached = freshest(url, stored)
-    if (cached && !shouldRefresh(cached.entry)) {
+    if (cached && !shouldRefresh(url, cached.entry)) {
       next[url] = cached.entry
       publish(cached, directories)
       hits += 1
@@ -233,8 +237,8 @@ async function microlinkAssets(url: string): Promise<MicrolinkAssets> {
   api.searchParams.set('meta', 'true')
   api.searchParams.set('screenshot.type', 'jpeg')
   api.searchParams.set('screenshot.quality', '60')
-  api.searchParams.set('viewport.width', String(CARD_WIDTH))
-  api.searchParams.set('viewport.height', String(CARD_HEIGHT))
+  api.searchParams.set('viewport.width', String(VIEWPORT_WIDTH))
+  api.searchParams.set('viewport.height', String(VIEWPORT_HEIGHT))
   api.searchParams.set('viewport.deviceScaleFactor', '1')
   api.searchParams.set('filter', 'screenshot,image')
   api.searchParams.set('timeout', '20000')
@@ -323,8 +327,8 @@ async function toCardWebp(input: Buffer): Promise<Buffer> {
     .toBuffer()
 }
 
-function shouldRefresh(entry: PreviewEntry): boolean {
-  if (process.env.LINK_PREVIEW_REFRESH === '1') return true
+function shouldRefresh(url: string, entry: PreviewEntry): boolean {
+  if (process.env.LINK_PREVIEW_REFRESH === '1' || entry.file !== fileNameFor(url)) return true
   const fetchedAt = Date.parse(entry.fetchedAt)
   if (Number.isNaN(fetchedAt)) return true
   return Date.now() - fetchedAt >= ttlMs()
@@ -408,7 +412,8 @@ function serializeManifest(manifest: PreviewManifest): string {
 }
 
 function fileNameFor(url: string): string {
-  return `${createHash('sha256').update(url).digest('hex').slice(0, 16)}.webp`
+  const key = `${url}\n${VIEWPORT_WIDTH}x${VIEWPORT_HEIGHT}`
+  return `${createHash('sha256').update(key).digest('hex').slice(0, 16)}.webp`
 }
 
 function writeIfChanged(path: string, bytes: Buffer): void {
