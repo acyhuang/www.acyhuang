@@ -1,5 +1,6 @@
 ---
 import Analytics from '@vercel/analytics/astro'
+import { loadPreviewMap } from '../lib/link-previews'
 import '../styles/global.css'
 
 interface Props {
@@ -11,6 +12,7 @@ const {
   title = 'Allison Huang',
   description = 'Notes by Allison Huang',
 } = Astro.props
+const linkPreviews = loadPreviewMap()
 ---
 
 <!doctype html>
@@ -50,8 +52,15 @@ const {
         />
       </div>
     </aside>
+    <script id="link-previews" type="application/json" is:inline set:html={JSON.stringify(linkPreviews)}></script>
     <script>
+      import { previewKey } from '../lib/preview-url'
+
       const preview = document.querySelector<HTMLElement>('[data-external-preview]')
+      // Thumbnails are generated at build time and keyed like `previewKey`.
+      const linkPreviews: Record<string, string> = JSON.parse(
+        document.getElementById('link-previews')?.textContent || '{}',
+      )
       const hoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
       // Links in body text, as opposed to the site title and footer.
       const BODY_LINKS = '.note-prose a[href]'
@@ -99,8 +108,10 @@ const {
         return box
       }
 
-      const previewSrc = (link: HTMLAnchorElement) =>
-        `https://api.microlink.io/?url=${encodeURIComponent(new URL(link.href).href)}&screenshot=true&meta=false&embed=screenshot.url&viewport.width=1200&viewport.height=750&screenshot.type=jpeg`
+      const previewSrc = (link: HTMLAnchorElement) => {
+        const key = previewKey(link.href)
+        return (key && linkPreviews[key]) || ''
+      }
 
       const wireCardImage = (card: HTMLElement) => {
         const media = card.querySelector<HTMLElement>('[data-external-preview-media]')
@@ -113,7 +124,15 @@ const {
         const media = card.querySelector<HTMLElement>('[data-external-preview-media]')
         const image = card.querySelector<HTMLImageElement>('[data-external-preview-image]')
         if (!media || !image) return
-        image.src = previewSrc(link)
+        const src = previewSrc(link)
+        // No thumbnail (screenshot and og:image both failed at build time).
+        if (!src) {
+          image.removeAttribute('src')
+          media.removeAttribute('data-loaded')
+          media.setAttribute('data-failed', '')
+          return
+        }
+        image.src = src
         media.removeAttribute('data-failed')
         media.toggleAttribute('data-loaded', image.complete && image.naturalWidth > 0)
       }
@@ -255,7 +274,7 @@ const {
         for (const link of region.querySelectorAll<HTMLAnchorElement>(BODY_LINKS)) {
           if (!isPreviewLink(link)) continue
           const src = previewSrc(link)
-          if (preloaded.has(src)) continue
+          if (!src || preloaded.has(src)) continue
           preloaded.add(src)
           new Image().src = src
         }
