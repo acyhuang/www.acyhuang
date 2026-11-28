@@ -17,9 +17,17 @@ function linkPreviews() {
   }
 }
 
+// Type stripping is on by default since Node 22.18. Passing the old
+// experimental flag fails on Node 24, which is what .nvmrc asks Vercel to use.
+function nodeArgs(script) {
+  const [major, minor] = process.versions.node.split('.').map(Number)
+  const needsFlag = major < 22 || (major === 22 && minor < 18)
+  return needsFlag ? ['--experimental-strip-types', script] : [script]
+}
+
 function generateLinkPreviews(script) {
   return new Promise((resolve) => {
-    const child = spawn(process.execPath, ['--experimental-strip-types', script], {
+    const child = spawn(process.execPath, nodeArgs(script), {
       cwd: fileURLToPath(new URL('.', import.meta.url)),
       stdio: 'inherit',
       env: process.env,
